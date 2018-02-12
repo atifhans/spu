@@ -5,10 +5,10 @@ set CLK_NAME "clk";
 set CLK_PERIOD {CLK};
 set RST_NAME "reset";
 set TOP_MOD_NAME "{ARG0}";
-set SRC_FILE "rtl/defines_pkg.sv rtl/{ARG0}.sv";
+set SRC_FILE "../rtl/defines_pkg.sv ../rtl/{ARG0}.sv";
 ###############################################
 
-source cfg/setupdc.tcl
+source ../cfg/setupdc.tcl
 file mkdir work_synth
 
 define_design_lib WORK -path work_synth
