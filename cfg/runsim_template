@@ -4,4 +4,5 @@ rm -rf work
 vlib work
 vlog +acc ../rtl/defines_pkg.sv
 vlog +acc ../rtl/reg_file.sv
+vlog +acc ../rtl/simple_fixed.sv
 vsim -c {ARG0} -do "run -all; quit"
