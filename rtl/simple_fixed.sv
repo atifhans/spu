@@ -35,7 +35,7 @@ module simple_fixed #(parameter OPCODE_LEN  = 11,
             IMMEDIATE_LOAD_HALFWORD:
                 begin
                     for(int i=0; i < 8; i++) begin
-                        out_RT[i*16 +: 16] = in_I16;
+                        out_RT[i*HALFWORD +: HALFWORD] = in_I16;
                     end
                 end
 
@@ -69,8 +69,15 @@ module simple_fixed_tb();
         clk = 0;
         rst = 0;
 
+        $monitor("Time: %3d, out_RT: %h", $time, out_RT);
+
         opcode = IMMEDIATE_LOAD_HALFWORD;
-        in_I16 = 16'd23;
+        in_I16 = 16'h1234;
+        @(posedge clk) in_I16 = 16'h4311;
+
+        repeat(10) @(posedge clk);
+
+        $finish();
     end
 endmodule
 
