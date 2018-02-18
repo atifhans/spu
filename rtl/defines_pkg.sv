@@ -23,6 +23,8 @@ package defines_pkg;
     parameter QUADWORD   = 128;
 
     typedef enum logic [10:0] {  IMMEDIATE_LOAD_HALFWORD       = 11'b00010000011,
-                                 IMMEDIATE_LOAD_HALFWORD_UPPER = 11'b00010000010
+                                 IMMEDIATE_LOAD_HALFWORD_UPPER = 11'b00010000010,
+                                 //Shift and Rotate instructions
+                                 SHIFT_LEFT_HALFWORD_IMMEDIATE = 11'b00001111111
                               } Opcodes;
 endpackage
