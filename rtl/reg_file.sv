@@ -17,32 +17,59 @@ module reg_file #(parameter NUM_REGS = 128,
                   parameter RADDR_WD = $clog2(NUM_REGS))
 (
     input  logic                  clk,
-    input  logic                  reset,
-    input  logic [RADDR_WD-1:0]   reg_addr,
-    input  logic                  reg_wr,
-    input  logic [127:0]          reg_in,
-    output logic [127:0]          reg_out
+    input  logic                  rst,
+    input  logic [6:0]            ra_addr_ep,
+    input  logic [6:0]            rb_addr_ep,
+    input  logic [6:0]            rc_addr_ep,
+    input  logic [6:0]            rt_addr_ep,
+    input  logic [6:0]            ra_addr_op,
+    input  logic [6:0]            rb_addr_op,
+    input  logic [6:0]            rc_addr_op,
+    input  logic [6:0]            rt_addr_op,
+    input  logic                  rt_wr_en_ep,
+    input  logic                  rt_wr_en_op,
+    input  logic [127:0]          rt_wr_ep,
+    input  logic [127:0]          rt_wr_op,
+    output logic [127:0]          ra_rd_ep,
+    output logic [127:0]          rb_rd_ep,
+    output logic [127:0]          rc_rd_ep,
+    output logic [127:0]          ra_rd_op,
+    output logic [127:0]          rb_rd_op,
+    output logic [127:0]          rc_rd_op
 );
 
     logic [127:0] reg_array[128];
 
     always_ff @(posedge clk)
-        if(reset) begin
-            reg_out <= 'd0;
+    begin
+        if(rst) begin
+            ra_rd_ep <= 'd0;
+            rb_rd_ep <= 'd0;
+            rc_rd_ep <= 'd0;
+            ra_rd_op <= 'd0;
+            rb_rd_op <= 'd0;
+            rc_rd_op <= 'd0;
         end
         else begin
-            reg_out <= reg_array[reg_addr];
+            ra_rd_ep <= reg_array[ra_addr_ep];
+            rb_rd_ep <= reg_array[rb_addr_ep];
+            rc_rd_ep <= reg_array[rc_addr_ep];
+            ra_rd_op <= reg_array[ra_addr_op];
+            rb_rd_op <= reg_array[rb_addr_op];
+            rc_rd_op <= reg_array[rc_addr_op];
+        end
+    end
+
+    always_comb 
+    begin
+        if(rt_wr_en_ep) begin
+            reg_array[rt_addr_ep] = rt_wr_ep;
         end
 
-    always_ff @(posedge clk)
-        if(reset) begin
-            for(int i = 0; i < NUM_REGS; i++) begin
-                reg_array[i] <= 'd0;
-            end
+        if(rt_wr_en_op) begin
+            reg_array[rt_addr_op] = rt_wr_op;
         end
-        else begin
-            if(reg_wr) reg_array[reg_addr] <= reg_in;
-        end
+    end
 
 endmodule
 //end of file.

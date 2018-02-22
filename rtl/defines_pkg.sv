@@ -65,9 +65,9 @@ package defines_pkg;
                                  COMPARE_GREATER_THAN_HALFWORD             = 11'b01001001000,
                                  COMAPRE_GREATER_THAN_HALFWORD_IMMEDIATE   = 11'b00001001101,
                                  COMPARE_GREATER_THAN_BYTE                 = 11'b01001010000,
-                                 COMPARE_GREATER_THAN_BYTE_IMMEDIATE       = 11'b00001001110
+                                 COMPARE_GREATER_THAN_BYTE_IMMEDIATE       = 11'b00001001110,
+                                 //Shift and Rotate instructions
+                                 SHIFT_LEFT_HALFWORD_IMMEDIATE             = 11'b00001111111
                               } Opcodes;
+
 endpackage
-
-
-

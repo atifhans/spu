@@ -13,19 +13,35 @@
 
 import defines_pkg::*;
 
-module simple_fixed #(parameter OPCODE_LEN  = 11,
-                      parameter REG_ADDR_WD = 7,
-                      parameter REG_DATA_WD = 128)
+module even_pipe #(parameter OPCODE_LEN  = 11,
+                   parameter REG_ADDR_WD = 7,
+                   parameter REG_DATA_WD = 128)
 (
     input  logic                     clk,
     input  logic                     rst,
     input  Opcodes                   opcode,
-    input  logic [REG_DATA_WD-1:0]   in_RA,
-    input  logic [REG_DATA_WD-1:0]   in_RB,
+    input  logic [127:0]             in_RA,
+    input  logic [127:0]             in_RB,
+    input  logic [127:0]             in_RC,
+    input  logic [6:0]               in_I7,
+    input  logic [7:0]               in_I8,
     input  logic [9:0]               in_I10,
     input  logic [15:0]              in_I16,
     input  logic [17:0]              in_I18,
-    output logic [REG_DATA_WD-1:0]   out_RT
+    output logic [6:0]               rf_addr_s2_ep,
+    output logic [6:0]               rf_addr_s3_ep,
+    output logic [6:0]               rf_addr_s4_ep,
+    output logic [6:0]               rf_addr_s5_ep,
+    output logic [6:0]               rf_addr_s6_ep,
+    output logic [6:0]               rf_addr_s7_ep,
+    output logic [127:0]             rf_data_s2_ep,
+    output logic [127:0]             rf_data_s3_ep,
+    output logic [127:0]             rf_data_s4_ep,
+    output logic [127:0]             rf_data_s5_ep,
+    output logic [127:0]             rf_data_s6_ep,
+    output logic [127:0]             rf_data_s7_ep,
+    input  logic [6:0]               in_RT_addr,
+    output logic [127:0]             out_RT
 );
 
     logic [WORD-1:0] rep_lb32_I16;
@@ -33,7 +49,6 @@ module simple_fixed #(parameter OPCODE_LEN  = 11,
     assign rep_lb32_I16 = {16{in_I16[15]}, in_I16};
 
     always_comb begin
-
         case(opcode)
 
             IMMEDIATE_LOAD_HALFWORD:
@@ -57,14 +72,24 @@ module simple_fixed #(parameter OPCODE_LEN  = 11,
                     end
                  end
 
-        endcase
-            
+            SHIFT_LEFT_HALFWORD_IMMEDIATE:
+                begin
+                  if in_I7[3:6] < 16 begin
+                    for(int i=0; i < 8; i++) begin
+                       out_RT[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] << in_I7[3:6];
+                    end
+                  end
+                  else begin
+                       out_RT[i*HALFWORD +: HALFWORD] = 0;
+                  end
+                end
 
+        endcase
     end
 
 endmodule
 
-module simple_fixed_tb();
+module even_tb();
     
     logic clk;
     logic rst;
@@ -75,7 +100,7 @@ module simple_fixed_tb();
 
     always #5 clk = ~clk;
 
-    simple_fixed u_sf (
+    even_pipe u_even_pipe (
         .clk (clk),
         .rst (rst),
         .opcode(opcode),
@@ -92,6 +117,13 @@ module simple_fixed_tb();
         opcode = IMMEDIATE_LOAD_HALFWORD;
         in_I16 = 16'h1234;
         @(posedge clk) in_I16 = 16'h4311;
+
+        repeat(10) @(posedge clk);
+
+        opcode = SHIFT_LEFT_HALFWORD_IMMEDIATE;
+        in_I7 = 16'h0004;
+        in_RA = 16'h2132;
+        @(posedge clk) in_I7 = 16'h0044;;
 
         repeat(10) @(posedge clk);
 
