@@ -28,6 +28,10 @@ module simple_fixed #(parameter OPCODE_LEN  = 11,
     output logic [REG_DATA_WD-1:0]   out_RT
 );
 
+    logic [WORD-1:0] rep_lb32_I16;
+
+    assign rep_lb32_I16 = {16{in_I16[15]}, in_I16};
+
     always_comb begin
 
         case(opcode)
@@ -38,6 +42,20 @@ module simple_fixed #(parameter OPCODE_LEN  = 11,
                         out_RT[i*HALFWORD +: HALFWORD] = in_I16;
                     end
                 end
+
+            IMMEDIATE_LOAD_WORD:
+                 begin
+                    for(int i=0; i < 4; i++) begin
+                        out_RT[i*WORD +: WORD] = rep_lb32_I16;
+                    end
+                 end
+
+            IMMEDIATE_LOAD_ADDRESS:
+                 begin
+                    for(int i=0; i < 4; i++) begin
+                        out_RT[i*WORD +: WORD] = in_I18 & 0x0003ffff;
+                    end
+                 end
 
         endcase
             
