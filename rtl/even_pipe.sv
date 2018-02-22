@@ -1,14 +1,14 @@
 // ------------------------------------------//
-// Register File for SPU-Lite Processor
+// Even Pipe
 // ------------------------------------------//
 // Authors:
-// NAME:  Atif Iqbal                           
-// NETID: aahangar                             
-// SBUID: 111416569                            
+// NAME:  Atif Iqbal
+// NETID: aahangar
+// SBUID: 111416569
 //
 // NAME: Karthik Raj
-// NETID: ?
-// SBUID: ?
+// NETID: karamachandr
+// SBUID: 111675685
 // ------------------------------------------//
 
 import defines_pkg::*;
@@ -28,6 +28,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     input  logic [9:0]               in_I10,
     input  logic [15:0]              in_I16,
     input  logic [17:0]              in_I18,
+    input  logic [6:0]               in_RT_addr,
     output logic [6:0]               rf_addr_s2_ep,
     output logic [6:0]               rf_addr_s3_ep,
     output logic [6:0]               rf_addr_s4_ep,
@@ -40,15 +41,15 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     output logic [127:0]             rf_data_s5_ep,
     output logic [127:0]             rf_data_s6_ep,
     output logic [127:0]             rf_data_s7_ep,
-    input  logic [6:0]               in_RT_addr,
     output logic [127:0]             out_RT
 );
 
     logic [WORD-1:0] rep_lb32_I16;
 
-    assign rep_lb32_I16 = {16{in_I16[15]}, in_I16};
+    assign rep_lb32_I16 = {{16{in_I16[15]}}, in_I16};
 
-    always_comb begin
+    always_comb
+    begin
         case(opcode)
 
             IMMEDIATE_LOAD_HALFWORD:
@@ -68,19 +69,19 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             IMMEDIATE_LOAD_ADDRESS:
                  begin
                     for(int i=0; i < 4; i++) begin
-                        out_RT[i*WORD +: WORD] = in_I18 & 0x0003ffff;
+                        out_RT[i*WORD +: WORD] = in_I18 & 18'h3ffff;
                     end
                  end
 
             SHIFT_LEFT_HALFWORD_IMMEDIATE:
                 begin
-                  if in_I7[3:6] < 16 begin
+                  if(in_I7[4:0] < 16) begin
                     for(int i=0; i < 8; i++) begin
-                       out_RT[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] << in_I7[3:6];
+                      out_RT[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] << in_I7[4:0];
                     end
                   end
                   else begin
-                       out_RT[i*HALFWORD +: HALFWORD] = 0;
+                    out_RT = 'd0;
                   end
                 end
 
@@ -89,7 +90,8 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
 
 endmodule
 
-module even_tb();
+/*
+module even_pipe_tb();
     
     logic clk;
     logic rst;
@@ -130,5 +132,5 @@ module even_tb();
         $finish();
     end
 endmodule
-
+*/
 //end of file.

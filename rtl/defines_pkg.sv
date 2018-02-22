@@ -12,8 +12,6 @@
 
 package defines_pkg;
 
-    `define UTEST_SFIXED
-
     parameter NUM_PIPES = 2;
 
     parameter BYTE       =   8;
@@ -56,17 +54,15 @@ package defines_pkg;
                                  EQUIVALENT                                = 11'b01001001001,
                                  COMPARE_EQUAL_WORD                        = 11'b01111000000,
                                  COMPARE_EQUAL_WORD_IMMEDIATE              = 11'b00001111100,
-                                 COMPARE_EQUAL_BYTE                        = 11'b01111010000,
-                                 COMPARE_EQUAL_BYTE_IMMEDIATE              = 11'b00001111110,
                                  COMPARE_EQUAL_HALFWORD                    = 11'b01111001000,
-                                 COMPARE_EQUAL_HALFWORD_IMMEDIATE          = 11'b00001111110,
+                                 COMPARE_EQUAL_HALFWORD_IMMEDIATE          = 11'b00001111101,
                                  COMPARE_GREATER_THAN_WORD                 = 11'b01001000000,
                                  COMPARE_GREATER_THAN_WORD_IMMEDIATE       = 11'b00001001100,
                                  COMPARE_GREATER_THAN_HALFWORD             = 11'b01001001000,
                                  COMAPRE_GREATER_THAN_HALFWORD_IMMEDIATE   = 11'b00001001101,
                                  COMPARE_GREATER_THAN_BYTE                 = 11'b01001010000,
                                  COMPARE_GREATER_THAN_BYTE_IMMEDIATE       = 11'b00001001110,
-                                 //Shift and Rotate instructions
+                                 //Shift and Rotate
                                  SHIFT_LEFT_HALFWORD_IMMEDIATE             = 11'b00001111111
                               } Opcodes;
 

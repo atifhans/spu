@@ -44,12 +44,6 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     output logic [127:0]             out_RT
 );
 
-    always_comb begin
-        case(opcode)
-
-
-        endcase
-    end
 
 endmodule
 //end of file.
