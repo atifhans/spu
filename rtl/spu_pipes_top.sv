@@ -80,6 +80,8 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
     logic [127:0]          ra_fw_op;
     logic [127:0]          rb_fw_op;
     logic [127:0]          rc_fw_op;
+    logic [6:0]            rt_fw_addr_ep;
+    logic [6:0]            rt_fw_addr_op;
 
     reg_file u_reg_file (
         .clk          ( clk         ),
@@ -87,11 +89,11 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .ra_addr_ep   ( ra_addr_ep  ),
         .rb_addr_ep   ( rb_addr_ep  ),
         .rc_addr_ep   ( rc_addr_ep  ),
-        .rt_addr_ep   ( rt_addr_ep  ),
+        .rt_addr_ep   ( rt_fw_addr_ep  ),
         .ra_addr_op   ( ra_addr_op  ),
         .rb_addr_op   ( rb_addr_op  ),
         .rc_addr_op   ( rc_addr_op  ),
-        .rt_addr_op   ( rt_addr_op  ),
+        .rt_addr_op   ( rt_fw_addr_op  ),
         .rt_wr_en_ep  ( rt_wr_en_ep ),
         .rt_wr_en_op  ( rt_wr_en_op ),
         .rt_wr_ep     ( rt_wr_ep    ),
@@ -166,6 +168,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .in_I10        (in_I10e),
         .in_I16        (in_I16e),
         .in_I18        (in_I18e),
+        .in_RT_addr    (rt_addr_ep),
         .rf_addr_s2_ep ( rf_addr_s2_ep ),
         .rf_addr_s3_ep ( rf_addr_s3_ep ),
         .rf_addr_s4_ep ( rf_addr_s4_ep ),
@@ -178,6 +181,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .rf_data_s5_ep ( rf_data_s5_ep ),
         .rf_data_s6_ep ( rf_data_s6_ep ),
         .rf_data_s7_ep ( rf_data_s7_ep ),
+        .out_RT_addr    (rt_fw_addr_ep),
         .out_RT        (rt_wr_ep)
     );
 
@@ -194,6 +198,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .in_I10        (in_I10o),
         .in_I16        (in_I16o),
         .in_I18        (in_I18o),
+        .in_RT_addr    (rt_addr_op),
         .rf_addr_s2_op ( rf_addr_s2_op ),
         .rf_addr_s3_op ( rf_addr_s3_op ),
         .rf_addr_s4_op ( rf_addr_s4_op ),
@@ -206,7 +211,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .rf_data_s5_op ( rf_data_s5_op ),
         .rf_data_s6_op ( rf_data_s6_op ),
         .rf_data_s7_op ( rf_data_s7_op ),
-        .in_RT_addr    ( rt_addr_op ),
+        .out_RT_addr    (rt_fw_addr_op),
         .out_RT        (rt_wr_op)
     );
 

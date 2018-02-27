@@ -118,7 +118,7 @@ module spu_pipes_tb();
             in_I7o     = in_I18o[6:0];
         end
 
-        repeat(1000) @(posedge clk);
+        repeat(100) @(posedge clk);
         $finish;
     end
 

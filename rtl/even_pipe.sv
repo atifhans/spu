@@ -29,6 +29,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     input  logic [9:0]               in_I10,
     input  logic [15:0]              in_I16,
     input  logic [17:0]              in_I18,
+    input  logic [6:0]               in_RT_addr,
     output logic [6:0]               rf_addr_s2_ep,
     output logic [6:0]               rf_addr_s3_ep,
     output logic [6:0]               rf_addr_s4_ep,
@@ -41,33 +42,96 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     output logic [127:0]             rf_data_s5_ep,
     output logic [127:0]             rf_data_s6_ep,
     output logic [127:0]             rf_data_s7_ep,
+    output logic [6:0]               out_RT_addr,
     output logic [127:0]             out_RT
 );
 
     logic            rt_wr_en;
-    logic [WORD-1:0] rep_lb32_I16;
+    logic [6:0]      rf_addr_s1_ep;
+    logic [127:0]    rf_data_s1_ep;
+    logic            rf_s1_we;
+    logic            rf_s2_we;
+    logic            rf_s3_we;
+    logic            rf_s4_we;
+    logic            rf_s5_we;
+    logic            rf_s6_we;
+    logic            rf_s7_we;
+    logic [127:0]    RT_reg;
+
+    logic [WORD-1:0]     rep_lb32_I16;
+    logic [HALFWORD-1:0] rep_lb16_I10;
+    logic [WORD-1:0]     rep_lb32_I10;
 
     assign rep_lb32_I16 = {{16{in_I16[15]}}, in_I16};
+    assign rep_lb16_I10 = {{6{in_I10[9]}}, in_I10};
+    assign rep_lb32_I10 = {{22{in_I10[9]}}, in_I10};
 
     always_ff @(posedge clk) begin
         if(rst) begin
-            rt_wr_en_ep <= 'd0;
+            rf_addr_s1_ep <= 'd0;
+            rf_addr_s2_ep <= 'd0;
+            rf_addr_s3_ep <= 'd0;
+            rf_addr_s4_ep <= 'd0;
+            rf_addr_s5_ep <= 'd0;
+            rf_addr_s6_ep <= 'd0;
+            rf_addr_s7_ep <= 'd0;
+            out_RT_addr   <= 'd0;
+            rf_data_s1_ep <= 'd0;
+            rf_data_s2_ep <= 'd0;
+            rf_data_s3_ep <= 'd0;
+            rf_data_s4_ep <= 'd0;
+            rf_data_s5_ep <= 'd0;
+            rf_data_s6_ep <= 'd0;
+            rf_data_s7_ep <= 'd0;
+            out_RT        <= 'd0;
+            rf_s1_we      <= 'd0;
+            rf_s2_we      <= 'd0;
+            rf_s3_we      <= 'd0;
+            rf_s4_we      <= 'd0;
+            rf_s5_we      <= 'd0;
+            rf_s6_we      <= 'd0;
+            rf_s7_we      <= 'd0;
+            rt_wr_en_ep   <= 'd0;
         end
         else begin
-            rt_wr_en_ep <= rt_wr_en;
+            rf_addr_s1_ep <= in_RT_addr;
+            rf_addr_s2_ep <= rf_addr_s1_ep;
+            rf_addr_s3_ep <= rf_addr_s2_ep;
+            rf_addr_s4_ep <= rf_addr_s3_ep;
+            rf_addr_s5_ep <= rf_addr_s4_ep;
+            rf_addr_s6_ep <= rf_addr_s5_ep;
+            rf_addr_s7_ep <= rf_addr_s6_ep;
+            out_RT_addr   <= rf_addr_s7_ep;
+            rf_data_s1_ep <= RT_reg;
+            rf_data_s2_ep <= rf_data_s1_ep;
+            rf_data_s3_ep <= rf_data_s2_ep;
+            rf_data_s4_ep <= rf_data_s3_ep;
+            rf_data_s5_ep <= rf_data_s4_ep;
+            rf_data_s6_ep <= rf_data_s5_ep;
+            rf_data_s7_ep <= rf_data_s6_ep;
+            out_RT        <= rf_data_s7_ep;
+            rf_s1_we      <= rt_wr_en;
+            rf_s2_we      <= rf_s1_we;
+            rf_s3_we      <= rf_s2_we;
+            rf_s4_we      <= rf_s3_we;
+            rf_s5_we      <= rf_s4_we;
+            rf_s6_we      <= rf_s5_we;
+            rf_s7_we      <= rf_s6_we;
+            rt_wr_en_ep   <= rf_s7_we;
         end
     end
 
     always_comb
     begin
         rt_wr_en = 'd0;
+        RT_reg = 'd0;
 
         case(opcode)
 
             IMMEDIATE_LOAD_HALFWORD:
                 begin
                     for(int i=0; i < 8; i++) begin
-                        out_RT[i*HALFWORD +: HALFWORD] = in_I16;
+                        RT_reg[i*HALFWORD +: HALFWORD] = in_I16;
                     end
                     rt_wr_en = 1;
                 end
@@ -75,7 +139,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             IMMEDIATE_LOAD_WORD:
                  begin
                     for(int i=0; i < 4; i++) begin
-                        out_RT[i*WORD +: WORD] = rep_lb32_I16;
+                        RT_reg[i*WORD +: WORD] = rep_lb32_I16;
                     end
                     rt_wr_en = 1;
                  end
@@ -83,70 +147,90 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             IMMEDIATE_LOAD_ADDRESS:
                  begin
                     for(int i=0; i < 4; i++) begin
-                        out_RT[i*WORD +: WORD] = in_I18 & 18'h3ffff;
+                        RT_reg[i*WORD +: WORD] = in_I18 & 18'h3ffff;
                     end
                     rt_wr_en = 1;
                  end
 
+            ADD_HALF_WORD:
+                begin
+                    for(int i=0; i < 8; i++) begin
+                        RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] + in_RB[i*HALFWORD +: HALFWORD];
+                    end
+                    rt_wr_en = 1;
+                end
+
+            ADD_HALF_WORD_IMMEDIATE:
+                begin
+                    for(int i=0; i < 8; i++) begin
+                        RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] + rep_lb16_I10;
+                    end
+                    rt_wr_en = 1;
+                end
+
+            ADD_WORD:
+                begin
+                    for(int i=0; i < 4; i++) begin
+                        RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] + in_RB[i*WORD +: WORD];
+                    end
+                    rt_wr_en = 1;
+                end
+
+            ADD_WORD_IMMEDIATE:
+                begin
+                    for(int i=0; i < 4; i++) begin
+                        RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] + rep_lb32_I10;
+                    end
+                    rt_wr_en = 1;
+                end
+
+            SUBTRACT_FROM_HALFWORD:
+                begin
+                    for(int i=0; i < 8; i++) begin
+                        RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] - in_RB[i*HALFWORD +: HALFWORD];
+                    end
+                    rt_wr_en = 1;
+                end
+
+            SUBTRACT_FROM_HALFWORD_IMMEDIATE:
+                begin
+                    for(int i=0; i < 8; i++) begin
+                        RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] - rep_lb16_I10;
+                    end
+                    rt_wr_en = 1;
+                end
+
+            SUBTRACT_FROM_WORD:
+                begin
+                    for(int i=0; i < 4; i++) begin
+                        RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] - in_RB[i*WORD +: WORD];
+                    end
+                    rt_wr_en = 1;
+                end
+
+            SUBTRACT_FROM_WORD_IMMEDIATE:
+                begin
+                    for(int i=0; i < 4; i++) begin
+                        RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] - rep_lb32_I10;
+                    end
+                    rt_wr_en = 1;
+                end
+
             SHIFT_LEFT_HALFWORD_IMMEDIATE:
                 begin
-                  if(in_I7[4:0] < 16) begin
-                    for(int i=0; i < 8; i++) begin
-                      out_RT[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] << in_I7[4:0];
+                    if(in_I7[4:0] < 16) begin
+                        for(int i=0; i < 8; i++) begin
+                            RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] << in_I7[4:0];
+                        end
                     end
-                  end
-                  else begin
-                    out_RT = 'd0;
-                  end
-                  rt_wr_en = 1;
+                    else begin
+                        RT_reg = 'd0;
+                    end
+                    rt_wr_en = 1;
                 end
 
         endcase
     end
 
 endmodule
-
-/*
-module even_pipe_tb();
-    
-    logic clk;
-    logic rst;
-
-    logic [15:0]  in_I16;
-    Opcodes       opcode;
-    logic [127:0] out_RT;
-
-    always #5 clk = ~clk;
-
-    even_pipe u_even_pipe (
-        .clk (clk),
-        .rst (rst),
-        .opcode(opcode),
-        .in_I16 (in_I16),
-        .out_RT (out_RT)
-    );
-
-    initial begin
-        clk = 0;
-        rst = 0;
-
-        $monitor("Time: %3d, out_RT: %h", $time, out_RT);
-
-        opcode = IMMEDIATE_LOAD_HALFWORD;
-        in_I16 = 16'h1234;
-        @(posedge clk) in_I16 = 16'h4311;
-
-        repeat(10) @(posedge clk);
-
-        opcode = SHIFT_LEFT_HALFWORD_IMMEDIATE;
-        in_I7 = 16'h0004;
-        in_RA = 16'h2132;
-        @(posedge clk) in_I7 = 16'h0044;;
-
-        repeat(10) @(posedge clk);
-
-        $finish();
-    end
-endmodule
-*/
 //end of file.

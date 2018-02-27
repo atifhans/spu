@@ -29,6 +29,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     input  logic [9:0]               in_I10,
     input  logic [15:0]              in_I16,
     input  logic [17:0]              in_I18,
+    input  logic [6:0]               in_RT_addr,
     output logic [6:0]               rf_addr_s2_op,
     output logic [6:0]               rf_addr_s3_op,
     output logic [6:0]               rf_addr_s4_op,
@@ -41,7 +42,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     output logic [127:0]             rf_data_s5_op,
     output logic [127:0]             rf_data_s6_op,
     output logic [127:0]             rf_data_s7_op,
-    input  logic [6:0]               in_RT_addr,
+    output logic [6:0]               out_RT_addr,
     output logic [127:0]             out_RT
 );
 
