@@ -20,6 +20,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     input  logic                     clk,
     input  logic                     rst,
     input  Opcodes                   opcode,
+    output logic                     rt_wr_en_ep,
     input  logic [127:0]             in_RA,
     input  logic [127:0]             in_RB,
     input  logic [127:0]             in_RC,
@@ -28,7 +29,6 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     input  logic [9:0]               in_I10,
     input  logic [15:0]              in_I16,
     input  logic [17:0]              in_I18,
-    input  logic [6:0]               in_RT_addr,
     output logic [6:0]               rf_addr_s2_ep,
     output logic [6:0]               rf_addr_s3_ep,
     output logic [6:0]               rf_addr_s4_ep,
@@ -44,12 +44,24 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     output logic [127:0]             out_RT
 );
 
+    logic            rt_wr_en;
     logic [WORD-1:0] rep_lb32_I16;
 
     assign rep_lb32_I16 = {{16{in_I16[15]}}, in_I16};
 
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            rt_wr_en_ep <= 'd0;
+        end
+        else begin
+            rt_wr_en_ep <= rt_wr_en;
+        end
+    end
+
     always_comb
     begin
+        rt_wr_en = 'd0;
+
         case(opcode)
 
             IMMEDIATE_LOAD_HALFWORD:
@@ -57,6 +69,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         out_RT[i*HALFWORD +: HALFWORD] = in_I16;
                     end
+                    rt_wr_en = 1;
                 end
 
             IMMEDIATE_LOAD_WORD:
@@ -64,6 +77,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         out_RT[i*WORD +: WORD] = rep_lb32_I16;
                     end
+                    rt_wr_en = 1;
                  end
 
             IMMEDIATE_LOAD_ADDRESS:
@@ -71,6 +85,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         out_RT[i*WORD +: WORD] = in_I18 & 18'h3ffff;
                     end
+                    rt_wr_en = 1;
                  end
 
             SHIFT_LEFT_HALFWORD_IMMEDIATE:
@@ -83,6 +98,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                   else begin
                     out_RT = 'd0;
                   end
+                  rt_wr_en = 1;
                 end
 
         endcase

@@ -12,7 +12,8 @@
 
 package defines_pkg;
 
-    parameter NUM_PIPES = 2;
+    parameter EVENINSFILE   = "even_ins_file.txt";
+    parameter ODDINSFILE    = "odd_ins_file.txt";
 
     parameter BYTE       =   8;
     parameter HALFWORD   =  16;

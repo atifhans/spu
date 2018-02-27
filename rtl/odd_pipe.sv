@@ -20,6 +20,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     input  logic                     clk,
     input  logic                     rst,
     input  Opcodes                   opcode,
+    output logic                     rt_wr_en_op,
     input  logic [127:0]             in_RA,
     input  logic [127:0]             in_RB,
     input  logic [127:0]             in_RC,
@@ -43,6 +44,19 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     input  logic [6:0]               in_RT_addr,
     output logic [127:0]             out_RT
 );
+
+    logic            rt_wr_en;
+
+    assign rt_wr_en = 0; //TODO: 
+
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            rt_wr_en_op <= 'd0;
+        end
+        else begin
+            rt_wr_en_op <= rt_wr_en;
+        end
+    end
 
 
 endmodule
