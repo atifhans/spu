@@ -12,8 +12,7 @@
 
 package defines_pkg;
 
-    parameter EVENINSFILE   = "even_ins_file.txt";
-    parameter ODDINSFILE    = "odd_ins_file.txt";
+    parameter NUM_PIPES = 2;
 
     parameter BYTE       =   8;
     parameter HALFWORD   =  16;
@@ -64,7 +63,20 @@ package defines_pkg;
                                  COMPARE_GREATER_THAN_BYTE                 = 11'b01001010000,
                                  COMPARE_GREATER_THAN_BYTE_IMMEDIATE       = 11'b00001001110,
                                  //Shift and Rotate
-                                 SHIFT_LEFT_HALFWORD_IMMEDIATE             = 11'b00001111111
+                                 SHIFT_LEFT_HALFWORD                       = 11'b00001011111,
+                                 SHIFT_LEFT_HALFWORD_IMMEDIATE             = 11'b00001111111,
+                                 SHIFT_LEFT_WORD                           = 11'b00001011011,
+                                 SHIFT_LEFT_WORD_IMMEDIATE                 = 11'b00001111011,
+                                 SHIFT_LEFT_QUADWORD_BY_BITS               = 11'b00111011011,
+                                 SHIFT_LEFT_QUADWORD_BY_BITS_IMMEDIATE     = 11'b00111111011,
+                                 SHIFT_LEFT_QUADWORD_BY_BYTES              = 11'b00111011111,
+                                 SHIFT_LEFT_QUADWORD_BY_BYTES_IMMEDIATE    = 11'b00111111111,
+                                 ROTATE_WORD                               = 11'b00001011000,
+                                 ROTATE_WORD_IMMEDIATE                     = 11'b00001111000,
+                                 ROTATE_QUADWORD_BY_BITS                   = 11'b00111011000,
+                                 ROTATE_QUADWORD_BY_BITS_IMMEDIATE         = 11'b00111111000,
+                                 ROTATE_QUADWORD_BY_BYTES                  = 11'b00111011100,
+                                 ROTATE_QUADWORD_BY_BYTES_IMMEDIATE        = 11'b00111111100
                               } Opcodes;
 
 endpackage

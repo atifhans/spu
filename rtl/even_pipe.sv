@@ -66,6 +66,12 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     assign rep_lb16_I10 = {{6{in_I10[9]}}, in_I10};
     assign rep_lb32_I10 = {{22{in_I10[9]}}, in_I10};
 
+// Rotate Variables
+    logic [31:0]   result;
+    logic [31:0]   operand;
+    logic [4:0]    rotate;
+    logic [4:0]    rotate_temp;
+
     always_ff @(posedge clk) begin
         if(rst) begin
             rf_addr_s1_ep <= 'd0;
@@ -228,6 +234,81 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     end
                     rt_wr_en = 1;
                 end
+
+            SHIFT_LEFT_HALFWORD_IMMEDIATE:
+                    begin
+                      if(in_I7[4:0] < 16) begin
+                        for(int i=0; i < 8; i++) begin
+                          RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] << in_I7[4:0];
+                        end
+                      end
+                      else begin
+                        RT_reg = 'd0;
+                      end
+                      rt_wr_en = 1;
+                    end
+
+            SHIFT_LEFT_WORD:
+                    begin
+                       for (int i=0; i < 4; i++) begin
+                                 if (in_RB[i*WORD +: 4] < 32) begin
+                                     RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] << in_RB[i*WORD +: 4];
+                                 end
+                                 else begin
+                                     RT_reg[i*WORD +: WORD] = 'd0;
+                                 end
+                       end
+                      rt_wr_en = 1;
+                    end
+
+             SHIFT_LEFT_WORD_IMMEDIATE:
+                    begin
+                      if(in_I7[4:0] < 32) begin
+                        for(int i=0; i < 4; i++) begin
+                          RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] << in_I7[4:0];
+                        end
+                      end
+                      else begin
+                        RT_reg = 'd0;
+                      end
+                      rt_wr_en = 1;
+                    end
+
+             ROTATE_WORD:
+                   begin
+                     for (int i=0; i < 4; i++) begin
+                            operand = in_RA[i*WORD +: WORD];
+                            rotate = in_RB[i*WORD +: 4];
+                            while(rotate > 32)begin
+                                  rotate_temp = rotate - 32;
+                                  rotate = rotate_temp;
+                            end
+                            for ( int j=0; j < rotate ; j++) begin
+                                result =  {operand[30:0],operand[31]};
+                                operand = result;
+                            end
+                            RT_reg[i*WORD +: WORD] = operand;
+                     end
+                     rt_wr_en = 1;
+                   end
+
+             ROTATE_WORD_IMMEDIATE:
+                    begin
+                     for (int i=0; i < 4; i++) begin
+                            operand = in_RA[i*WORD +: WORD];
+                            rotate = in_I7[4:0];
+                            while(rotate > 32)begin
+                                  rotate_temp = rotate - 32;
+                                  rotate = rotate_temp;
+                            end
+                            for ( int j=0; j < rotate ; j++) begin
+                                result =  {operand[30:0],operand[31]};
+                                operand = result;
+                            end
+                            RT_reg[i*WORD +: WORD] = operand;
+                     end
+                     rt_wr_en = 1;
+                   end
 
         endcase
     end
