@@ -35,8 +35,8 @@ module spu_pipes_tb();
     logic [15:0]           in_I16o;
     logic [17:0]           in_I18o;
 
-    logic [56:0]           ins_ep[5];
-    logic [56:0]           ins_op[5];
+    logic [56:0]           ins_ep[10];
+    logic [56:0]           ins_op[10];
 
     always #5 clk = ~clk;
 

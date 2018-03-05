@@ -61,9 +61,20 @@ package defines_pkg;
                                  COMPARE_GREATER_THAN_WORD                 = 11'b01001000000,
                                  COMPARE_GREATER_THAN_WORD_IMMEDIATE       = 11'b00001001100,
                                  COMPARE_GREATER_THAN_HALFWORD             = 11'b01001001000,
-                                 COMAPRE_GREATER_THAN_HALFWORD_IMMEDIATE   = 11'b00001001101,
-                                 COMPARE_GREATER_THAN_BYTE                 = 11'b01001010000,
-                                 COMPARE_GREATER_THAN_BYTE_IMMEDIATE       = 11'b00001001110,
+                                 COMPARE_GREATER_THAN_HALFWORD_IMMEDIATE   = 11'b00001001101,
+                                 //Single Precision Unit
+                                 MULTIPLY                                  = 11'b01111000100,
+                                 MULTIPLY_IMMEDIATE                        = 11'b00001110100,
+                                 MULTIPLY_AND_ADD                          = 11'b10000001100, //TODO: added one in MSB.
+                                 FLOATING_ADD                              = 11'b01011000100,
+                                 FLOATING_SUBTRACT                         = 11'b01011000101,
+                                 FLOATING_MULTIPLY_AND_ADD                 = 11'b00000001110,
+                                 FLOATING_MULTIPLY_AND_SUBTRACT            = 11'b00000001111,
+                                 //Byte Unit
+                                 COUNT_ONES_IN_BYTES                       = 11'b01010110100,
+                                 AVERAGE_BYTES                             = 11'b00011010011,
+                                 ABSOLUTE_DIFFERENCE_OF_BYTES              = 11'b00001010011,
+                                 SUM_BYTES_INTO_HALFWORDS                  = 11'b01001010011,
                                  //Shift and Rotate
                                  SHIFT_LEFT_HALFWORD                       = 11'b00001011111,
                                  SHIFT_LEFT_HALFWORD_IMMEDIATE             = 11'b00001111111,
@@ -78,7 +89,10 @@ package defines_pkg;
                                  ROTATE_QUADWORD_BY_BITS                   = 11'b00111011000,
                                  ROTATE_QUADWORD_BY_BITS_IMMEDIATE         = 11'b00111111000,
                                  ROTATE_QUADWORD_BY_BYTES                  = 11'b00111011100,
-                                 ROTATE_QUADWORD_BY_BYTES_IMMEDIATE        = 11'b00111111100
+                                 ROTATE_QUADWORD_BY_BYTES_IMMEDIATE        = 11'b00111111100,
+                                 //Control
+                                 LNOP                                      = 11'b00000000001,
+                                 NOP                                       = 11'b01000000001
                               } Opcodes;
 
 endpackage

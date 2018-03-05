@@ -20,68 +20,68 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
     input  logic                     rst,
     input  Opcodes                   opcode_ep,
     input  Opcodes                   opcode_op,
-    input  logic [6:0]               ra_addr_ep,
-    input  logic [6:0]               rb_addr_ep,
-    input  logic [6:0]               rc_addr_ep,
-    input  logic [6:0]               rt_addr_ep,
-    input  logic [6:0]               ra_addr_op,
-    input  logic [6:0]               rb_addr_op,
-    input  logic [6:0]               rc_addr_op,
-    input  logic [6:0]               rt_addr_op,
-    input  logic [6:0]               in_I7e,
-    input  logic [7:0]               in_I8e,
-    input  logic [9:0]               in_I10e,
-    input  logic [15:0]              in_I16e,
-    input  logic [17:0]              in_I18e,
-    input  logic [6:0]               in_I7o,
-    input  logic [7:0]               in_I8o,
-    input  logic [9:0]               in_I10o,
-    input  logic [15:0]              in_I16o,
-    input  logic [17:0]              in_I18o
+    input  logic [0:6]               ra_addr_ep,
+    input  logic [0:6]               rb_addr_ep,
+    input  logic [0:6]               rc_addr_ep,
+    input  logic [0:6]               rt_addr_ep,
+    input  logic [0:6]               ra_addr_op,
+    input  logic [0:6]               rb_addr_op,
+    input  logic [0:6]               rc_addr_op,
+    input  logic [0:6]               rt_addr_op,
+    input  logic [0:6]               in_I7e,
+    input  logic [0:7]               in_I8e,
+    input  logic [0:9]               in_I10e,
+    input  logic [0:15]              in_I16e,
+    input  logic [0:17]              in_I18e,
+    input  logic [0:6]               in_I7o,
+    input  logic [0:7]               in_I8o,
+    input  logic [0:9]               in_I10o,
+    input  logic [0:15]              in_I16o,
+    input  logic [0:17]              in_I18o
 );
 
     logic                  rt_wr_en_ep;
     logic                  rt_wr_en_op;
-    logic [127:0]          rt_wr_ep;
-    logic [127:0]          rt_wr_op;
-    logic [127:0]          ra_rd_ep;
-    logic [127:0]          rb_rd_ep;
-    logic [127:0]          rc_rd_ep;
-    logic [127:0]          ra_rd_op;
-    logic [127:0]          rb_rd_op;
-    logic [127:0]          rc_rd_op;
-    logic [6:0]            rf_addr_s2_ep;
-    logic [6:0]            rf_addr_s3_ep;
-    logic [6:0]            rf_addr_s4_ep;
-    logic [6:0]            rf_addr_s5_ep;
-    logic [6:0]            rf_addr_s6_ep;
-    logic [6:0]            rf_addr_s7_ep;
-    logic [6:0]            rf_addr_s2_op;
-    logic [6:0]            rf_addr_s3_op;
-    logic [6:0]            rf_addr_s4_op;
-    logic [6:0]            rf_addr_s5_op;
-    logic [6:0]            rf_addr_s6_op;
-    logic [6:0]            rf_addr_s7_op;
-    logic [127:0]          rf_data_s2_ep;
-    logic [127:0]          rf_data_s3_ep;
-    logic [127:0]          rf_data_s4_ep;
-    logic [127:0]          rf_data_s5_ep;
-    logic [127:0]          rf_data_s6_ep;
-    logic [127:0]          rf_data_s7_ep;
-    logic [127:0]          rf_data_s2_op;
-    logic [127:0]          rf_data_s3_op;
-    logic [127:0]          rf_data_s4_op;
-    logic [127:0]          rf_data_s5_op;
-    logic [127:0]          rf_data_s6_op;
-    logic [127:0]          rf_data_s7_op;
-    logic [127:0]          ra_fw_ep;
-    logic [127:0]          rb_fw_ep;
-    logic [127:0]          rc_fw_ep;
-    logic [127:0]          ra_fw_op;
-    logic [127:0]          rb_fw_op;
-    logic [127:0]          rc_fw_op;
-    logic [6:0]            rt_fw_addr_ep;
-    logic [6:0]            rt_fw_addr_op;
+    logic [0:127]          rt_wr_ep;
+    logic [0:127]          rt_wr_op;
+    logic [0:127]          ra_rd_ep;
+    logic [0:127]          rb_rd_ep;
+    logic [0:127]          rc_rd_ep;
+    logic [0:127]          ra_rd_op;
+    logic [0:127]          rb_rd_op;
+    logic [0:127]          rc_rd_op;
+    logic [0:6]            rf_addr_s2_ep;
+    logic [0:6]            rf_addr_s3_ep;
+    logic [0:6]            rf_addr_s4_ep;
+    logic [0:6]            rf_addr_s5_ep;
+    logic [0:6]            rf_addr_s6_ep;
+    logic [0:6]            rf_addr_s7_ep;
+    logic [0:6]            rf_addr_s2_op;
+    logic [0:6]            rf_addr_s3_op;
+    logic [0:6]            rf_addr_s4_op;
+    logic [0:6]            rf_addr_s5_op;
+    logic [0:6]            rf_addr_s6_op;
+    logic [0:6]            rf_addr_s7_op;
+    logic [0:127]          rf_data_s2_ep;
+    logic [0:127]          rf_data_s3_ep;
+    logic [0:127]          rf_data_s4_ep;
+    logic [0:127]          rf_data_s5_ep;
+    logic [0:127]          rf_data_s6_ep;
+    logic [0:127]          rf_data_s7_ep;
+    logic [0:127]          rf_data_s2_op;
+    logic [0:127]          rf_data_s3_op;
+    logic [0:127]          rf_data_s4_op;
+    logic [0:127]          rf_data_s5_op;
+    logic [0:127]          rf_data_s6_op;
+    logic [0:127]          rf_data_s7_op;
+    logic [0:127]          ra_fw_ep;
+    logic [0:127]          rb_fw_ep;
+    logic [0:127]          rc_fw_ep;
+    logic [0:127]          ra_fw_op;
+    logic [0:127]          rb_fw_op;
+    logic [0:127]          rc_fw_op;
+    logic [0:6]            rt_fw_addr_ep;
+    logic [0:6]            rt_fw_addr_op;
 
     reg_file u_reg_file (
         .clk          ( clk         ),
