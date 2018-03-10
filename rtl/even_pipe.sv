@@ -58,6 +58,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     logic            rf_s7_we;
     logic [0:127]    RT_reg;
     logic [0:32]     temp_reg;
+    logic [0:31]     temp_fp;
     logic [0:7]      temp_byte_reg;
     logic [0:7]      cnt_reg;
 
@@ -494,7 +495,11 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             FLOATING_ADD:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        RT_reg[i*WORD +: WORD] = $shortrealtobits($bitstoshortreal(in_RA[i*WORD +: WORD]) + $bitstoshortreal(in_RB[i*WORD +: WORD]));
+                        temp_fp = $shortrealtobits($bitstoshortreal(in_RA[i*WORD +: WORD]) + $bitstoshortreal(in_RB[i*WORD +: WORD]));
+                        if (temp_fp < -S_MAX)                         RT_reg[i*WORD +: WORD] = -S_MAX;
+                        else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] = S_MAX;
+                        else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] = 0;
+                        else                                          RT_reg[i*WORD +: WORD] = temp_fp;
                     end
                     rt_wr_en = 1;
                 end
@@ -503,6 +508,14 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                 begin
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = $shortrealtobits($bitstoshortreal(in_RA[i*WORD +: WORD]) - $bitstoshortreal(in_RB[i*WORD +: WORD]));
+                    end
+                    rt_wr_en = 1;
+                end
+
+            FLOATING_MULTIPLY:
+                begin
+                    for(int i=0; i < 4; i++) begin
+                        RT_reg[i*WORD +: WORD] = $shortrealtobits($bitstoshortreal(in_RA[i*WORD +: WORD]) * $bitstoshortreal(in_RB[i*WORD +: WORD]));
                     end
                     rt_wr_en = 1;
                 end

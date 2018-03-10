@@ -12,15 +12,18 @@
 
 package defines_pkg;
 
-    parameter EVENINSFILE  = "even_ins_file.txt";
+    parameter EVENINSFILE = "even_ins_file.txt";
     parameter ODDINSFILE  = "odd_ins_file.txt";
-    parameter NUM_PIPES = 2;
+    parameter NUM_PIPES   = 2;
 
     parameter BYTE       =   8;
     parameter HALFWORD   =  16;
     parameter WORD       =  32;
     parameter DOUBLEWORD =  64;
     parameter QUADWORD   = 128;
+
+    parameter S_MAX = 32'h7fffffff;
+    parameter S_MIN = 32'h00800000;
 
     typedef enum logic [10:0] {  //Simple Fixed Instructions
                                  IMMEDIATE_LOAD_HALFWORD                   = 11'b00010000011,
@@ -68,6 +71,7 @@ package defines_pkg;
                                  MULTIPLY_AND_ADD                          = 11'b10000001100, //TODO: added one in MSB.
                                  FLOATING_ADD                              = 11'b01011000100,
                                  FLOATING_SUBTRACT                         = 11'b01011000101,
+                                 FLOATING_MULTIPLY                         = 11'b01011000110,
                                  FLOATING_MULTIPLY_AND_ADD                 = 11'b00000001110,
                                  FLOATING_MULTIPLY_AND_SUBTRACT            = 11'b00000001111,
                                  //Byte Unit
@@ -92,7 +96,8 @@ package defines_pkg;
                                  ROTATE_QUADWORD_BY_BYTES_IMMEDIATE        = 11'b00111111100,
                                  //Control
                                  LNOP                                      = 11'b00000000001,
-                                 NOP                                       = 11'b01000000001
+                                 NOP                                       = 11'b01000000001,
+                                 STOP                                      = 11'b00000000000
                               } Opcodes;
 
 endpackage
