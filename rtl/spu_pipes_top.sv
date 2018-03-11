@@ -82,6 +82,18 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
     logic [0:127]          rc_fw_op;
     logic [0:6]            rt_fw_addr_ep;
     logic [0:6]            rt_fw_addr_op;
+    logic [0:2]            rf_idx_s2_ep;
+    logic [0:2]            rf_idx_s3_ep;
+    logic [0:2]            rf_idx_s4_ep;
+    logic [0:2]            rf_idx_s5_ep;
+    logic [0:2]            rf_idx_s6_ep;
+    logic [0:2]            rf_idx_s7_ep;
+    logic [0:2]            rf_idx_s2_op;
+    logic [0:2]            rf_idx_s3_op;
+    logic [0:2]            rf_idx_s4_op;
+    logic [0:2]            rf_idx_s5_op;
+    logic [0:2]            rf_idx_s6_op;
+    logic [0:2]            rf_idx_s7_op;
 
     reg_file u_reg_file (
         .clk          ( clk         ),
@@ -129,24 +141,40 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .rf_addr_s5_ep( rf_addr_s5_ep ),
         .rf_addr_s6_ep( rf_addr_s6_ep ),
         .rf_addr_s7_ep( rf_addr_s7_ep ),
+        .rf_addr_ep   ( rt_fw_addr_ep ),
         .rf_addr_s2_op( rf_addr_s2_op ),
         .rf_addr_s3_op( rf_addr_s3_op ),
         .rf_addr_s4_op( rf_addr_s4_op ),
         .rf_addr_s5_op( rf_addr_s5_op ),
         .rf_addr_s6_op( rf_addr_s6_op ),
         .rf_addr_s7_op( rf_addr_s7_op ),
+        .rf_addr_op   ( rt_fw_addr_op ),
         .rf_data_s2_ep( rf_data_s2_ep ),
         .rf_data_s3_ep( rf_data_s3_ep ),
         .rf_data_s4_ep( rf_data_s4_ep ),
         .rf_data_s5_ep( rf_data_s5_ep ),
         .rf_data_s6_ep( rf_data_s6_ep ),
         .rf_data_s7_ep( rf_data_s7_ep ),
+        .rf_data_ep   ( rt_wr_ep ),
         .rf_data_s2_op( rf_data_s2_op ),
         .rf_data_s3_op( rf_data_s3_op ),
         .rf_data_s4_op( rf_data_s4_op ),
         .rf_data_s5_op( rf_data_s5_op ),
         .rf_data_s6_op( rf_data_s6_op ),
         .rf_data_s7_op( rf_data_s7_op ),
+        .rf_data_op   ( rt_wr_op ),
+        .rf_idx_s2_op ( rf_idx_s2_op  ),
+        .rf_idx_s3_op ( rf_idx_s3_op  ),
+        .rf_idx_s4_op ( rf_idx_s4_op  ),
+        .rf_idx_s5_op ( rf_idx_s5_op  ),
+        .rf_idx_s6_op ( rf_idx_s6_op  ),
+        .rf_idx_s7_op ( rf_idx_s7_op  ),
+        .rf_idx_s2_ep ( rf_idx_s2_ep  ),
+        .rf_idx_s3_ep ( rf_idx_s3_ep  ),
+        .rf_idx_s4_ep ( rf_idx_s4_ep  ),
+        .rf_idx_s5_ep ( rf_idx_s5_ep  ),
+        .rf_idx_s6_ep ( rf_idx_s6_ep  ),
+        .rf_idx_s7_ep ( rf_idx_s7_ep  ),
         .ra_fw_ep     ( ra_fw_ep      ),
         .rb_fw_ep     ( rb_fw_ep      ),
         .rc_fw_ep     ( rc_fw_ep      ),
@@ -181,6 +209,12 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .rf_data_s5_ep ( rf_data_s5_ep ),
         .rf_data_s6_ep ( rf_data_s6_ep ),
         .rf_data_s7_ep ( rf_data_s7_ep ),
+        .rf_idx_s2_ep  ( rf_idx_s2_ep  ),
+        .rf_idx_s3_ep  ( rf_idx_s3_ep  ),
+        .rf_idx_s4_ep  ( rf_idx_s4_ep  ),
+        .rf_idx_s5_ep  ( rf_idx_s5_ep  ),
+        .rf_idx_s6_ep  ( rf_idx_s6_ep  ),
+        .rf_idx_s7_ep  ( rf_idx_s7_ep  ),
         .out_RT_addr    (rt_fw_addr_ep),
         .out_RT        (rt_wr_ep)
     );
@@ -211,7 +245,13 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .rf_data_s5_op ( rf_data_s5_op ),
         .rf_data_s6_op ( rf_data_s6_op ),
         .rf_data_s7_op ( rf_data_s7_op ),
-        .out_RT_addr    (rt_fw_addr_op),
+        .rf_idx_s2_op  ( rf_idx_s2_op  ),
+        .rf_idx_s3_op  ( rf_idx_s3_op  ),
+        .rf_idx_s4_op  ( rf_idx_s4_op  ),
+        .rf_idx_s5_op  ( rf_idx_s5_op  ),
+        .rf_idx_s6_op  ( rf_idx_s6_op  ),
+        .rf_idx_s7_op  ( rf_idx_s7_op  ),
+        .out_RT_addr   (rt_fw_addr_op),
         .out_RT        (rt_wr_op)
     );
 

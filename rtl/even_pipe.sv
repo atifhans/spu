@@ -29,6 +29,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     input  logic [0:9]               in_I10,
     input  logic [0:15]              in_I16,
     input  logic [0:17]              in_I18,
+    input  logic                     flush,
     input  logic [0:6]               in_RT_addr,
     output logic [0:6]               rf_addr_s2_ep,
     output logic [0:6]               rf_addr_s3_ep,
@@ -36,6 +37,12 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     output logic [0:6]               rf_addr_s5_ep,
     output logic [0:6]               rf_addr_s6_ep,
     output logic [0:6]               rf_addr_s7_ep,
+    output logic [0:2]               rf_idx_s2_ep,
+    output logic [0:2]               rf_idx_s3_ep,
+    output logic [0:2]               rf_idx_s4_ep,
+    output logic [0:2]               rf_idx_s5_ep,
+    output logic [0:2]               rf_idx_s6_ep,
+    output logic [0:2]               rf_idx_s7_ep,
     output logic [0:127]             rf_data_s2_ep,
     output logic [0:127]             rf_data_s3_ep,
     output logic [0:127]             rf_data_s4_ep,
@@ -49,6 +56,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     logic            rt_wr_en;
     logic [0:6]      rf_addr_s1_ep;
     logic [0:127]    rf_data_s1_ep;
+    logic [0:2]      rf_idx_s1_ep;
     logic            rf_s1_we;
     logic            rf_s2_we;
     logic            rf_s3_we;
@@ -58,9 +66,10 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     logic            rf_s7_we;
     logic [0:127]    RT_reg;
     logic [0:32]     temp_reg;
-    logic [0:31]     temp_fp;
     logic [0:7]      temp_byte_reg;
     logic [0:7]      cnt_reg;
+    logic [0:2]      unit_idx;
+    real             temp_fp;
 
     logic [0:WORD-1]     rep_lb32_I16;
     logic [0:HALFWORD-1] rep_lb16_I10;
@@ -93,6 +102,13 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             rf_data_s5_ep <= 'd0;
             rf_data_s6_ep <= 'd0;
             rf_data_s7_ep <= 'd0;
+            rf_idx_s1_ep  <= 'd0;
+            rf_idx_s2_ep  <= 'd0;
+            rf_idx_s3_ep  <= 'd0;
+            rf_idx_s4_ep  <= 'd0;
+            rf_idx_s5_ep  <= 'd0;
+            rf_idx_s6_ep  <= 'd0;
+            rf_idx_s7_ep  <= 'd0;
             out_RT        <= 'd0;
             rf_s1_we      <= 'd0;
             rf_s2_we      <= 'd0;
@@ -103,6 +119,39 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             rf_s7_we      <= 'd0;
             rt_wr_en_ep   <= 'd0;
         end
+        else if(flush) begin
+            rf_addr_s1_ep <= 'd0;
+            rf_addr_s2_ep <= 'd0;
+            rf_addr_s3_ep <= 'd0;
+            rf_addr_s4_ep <= rf_addr_s3_ep;
+            rf_addr_s5_ep <= rf_addr_s4_ep;
+            rf_addr_s6_ep <= rf_addr_s5_ep;
+            rf_addr_s7_ep <= rf_addr_s6_ep;
+            rf_idx_s1_ep  <= 'd0;
+            rf_idx_s2_ep  <= 'd0;
+            rf_idx_s3_ep  <= 'd0;
+            rf_idx_s4_ep  <= rf_idx_s3_ep;
+            rf_idx_s5_ep  <= rf_idx_s4_ep;
+            rf_idx_s6_ep  <= rf_idx_s5_ep;
+            rf_idx_s7_ep  <= rf_idx_s6_ep;
+            out_RT_addr   <= rf_addr_s7_ep;
+            rf_data_s1_ep <= 'd0;
+            rf_data_s2_ep <= 'd0;
+            rf_data_s3_ep <= 'd0;
+            rf_data_s4_ep <= rf_data_s3_ep;
+            rf_data_s5_ep <= rf_data_s4_ep;
+            rf_data_s6_ep <= rf_data_s5_ep;
+            rf_data_s7_ep <= rf_data_s6_ep;
+            out_RT        <= rf_data_s7_ep;
+            rf_s1_we      <= 'd0;
+            rf_s2_we      <= 'd0;
+            rf_s3_we      <= 'd0;
+            rf_s4_we      <= rf_s3_we;
+            rf_s5_we      <= rf_s4_we;
+            rf_s6_we      <= rf_s5_we;
+            rf_s7_we      <= rf_s6_we;
+            rt_wr_en_ep   <= rf_s7_we;
+        end
         else begin
             rf_addr_s1_ep <= in_RT_addr;
             rf_addr_s2_ep <= rf_addr_s1_ep;
@@ -111,6 +160,13 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             rf_addr_s5_ep <= rf_addr_s4_ep;
             rf_addr_s6_ep <= rf_addr_s5_ep;
             rf_addr_s7_ep <= rf_addr_s6_ep;
+            rf_idx_s1_ep  <= unit_idx;
+            rf_idx_s2_ep  <= rf_idx_s1_ep;
+            rf_idx_s3_ep  <= rf_idx_s2_ep;
+            rf_idx_s4_ep  <= rf_idx_s3_ep;
+            rf_idx_s5_ep  <= rf_idx_s4_ep;
+            rf_idx_s6_ep  <= rf_idx_s5_ep;
+            rf_idx_s7_ep  <= rf_idx_s6_ep;
             out_RT_addr   <= rf_addr_s7_ep;
             rf_data_s1_ep <= RT_reg;
             rf_data_s2_ep <= rf_data_s1_ep;
@@ -135,6 +191,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     begin
         rt_wr_en = 'd0;
         RT_reg = 'd0;
+        unit_idx = 'd0;
 
         case(opcode)
 
@@ -144,6 +201,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = in_I16;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -152,6 +210,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = rep_lb32_I16;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                  end
 
@@ -160,6 +219,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_I18 & 18'h3ffff;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                  end
 
@@ -168,6 +228,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] + in_RB[i*HALFWORD +: HALFWORD];
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -176,6 +237,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] + rep_lb16_I10;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -184,6 +246,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] + in_RB[i*WORD +: WORD];
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -192,6 +255,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] + rep_lb32_I10;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -200,6 +264,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] - in_RB[i*HALFWORD +: HALFWORD];
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -208,6 +273,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] - rep_lb16_I10;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -216,6 +282,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] - in_RB[i*WORD +: WORD];
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -224,6 +291,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] - rep_lb32_I10;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -232,6 +300,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] + in_RB[i*WORD +: WORD] + in_RC[i*WORD]; //TODO:Using RC instead of RT for now. Recheck
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -240,6 +309,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RB[i*WORD +: WORD] - in_RA[i*WORD +: WORD] + in_RC[i*WORD]; //TODO:Using RC instead of RT for now. Recheck
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -249,6 +319,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                         temp_reg = in_RA[i*WORD +: WORD] + in_RB[i*WORD +: WORD];
                         RT_reg[i*WORD +: WORD] = {31'd0, temp_reg[0]};
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -257,6 +328,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = (in_RB[i*WORD +: WORD] >= in_RA[i*WORD +: WORD]) ? 32'd1 : 32'd0;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -273,6 +345,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                         end
                         if(cnt_reg == 'd0) RT_reg[i*WORD +: WORD] = 32;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -281,6 +354,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] & in_RB[i*WORD +: WORD];
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -289,6 +363,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] & rep_lb32_I10;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -297,6 +372,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] & rep_lb16_I10;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -307,6 +383,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                         temp_reg[0:31] = {4{temp_reg[0:7]}};
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] & temp_reg[0:31];
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -315,6 +392,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] | in_RB[i*WORD +: WORD];
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -323,6 +401,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] | rep_lb32_I10;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -331,6 +410,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] | rep_lb16_I10;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -341,6 +421,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                         temp_reg[0:31] = {4{temp_reg[0:7]}};
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] | temp_reg[0:31];
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -349,6 +430,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] ^ in_RB[i*WORD +: WORD];
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -357,6 +439,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] ^ rep_lb32_I10;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -365,6 +448,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] ^ rep_lb16_I10;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -375,6 +459,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                         temp_reg[0:31] = {4{temp_reg[0:7]}};
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] ^ temp_reg[0:31];
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -383,6 +468,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = ~(in_RA[i*WORD +: WORD] & in_RB[i*WORD +: WORD]);
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -391,6 +477,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = ~(in_RA[i*WORD +: WORD] | in_RB[i*WORD +: WORD]);
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -399,6 +486,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] ^ (~in_RB[i*WORD +: WORD]);
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -407,6 +495,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = (in_RA[i*WORD +: WORD] == in_RB[i*WORD +: WORD])? 32'hffffffff : 32'h0;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -415,6 +504,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = (in_RA[i*WORD +: WORD] == rep_lb32_I10)? 32'hffffffff : 32'h0;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -423,6 +513,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = (in_RA[i*HALFWORD +: HALFWORD] == in_RB[i*HALFWORD +: HALFWORD])? 32'hffff : 32'h0;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -431,6 +522,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = (in_RA[i*HALFWORD +: HALFWORD] == rep_lb16_I10)? 32'hffff : 32'h0;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -439,6 +531,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = (in_RA[i*WORD +: WORD] > in_RB[i*WORD +: WORD])? 32'hffffffff : 32'h0;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -447,6 +540,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = (in_RA[i*WORD +: WORD] > rep_lb32_I10)? 32'hffffffff : 32'h0;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -455,6 +549,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = (in_RA[i*HALFWORD +: HALFWORD] > in_RB[i*HALFWORD +: HALFWORD])? 32'hffff : 32'h0;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -463,6 +558,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 8; i++) begin
                         RT_reg[i*HALFWORD +: HALFWORD] = (in_RA[i*HALFWORD +: HALFWORD] > rep_lb16_I10)? 32'hffff : 32'h0;
                     end
+                    unit_idx = 3'd1;
                     rt_wr_en = 1;
                 end
 
@@ -472,6 +568,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[((i*WORD)+HALFWORD) +: WORD] * in_RB[((i*WORD)+HALFWORD) +: WORD];
                     end
+                    unit_idx = 3'd3;
                     rt_wr_en = 1;
                 end
 
@@ -480,6 +577,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = in_RA[((i*WORD)+HALFWORD) +: WORD] * rep_lb16_I10;
                     end
+                    unit_idx = 3'd3;
                     rt_wr_en = 1;
                 end
 
@@ -488,6 +586,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = (in_RA[((i*WORD)+HALFWORD) +: WORD] * in_RB[((i*WORD)+HALFWORD) +: WORD]) + in_RC[i*WORD +: WORD];
                     end
+                    unit_idx = 3'd3;
                     rt_wr_en = 1;
                 end
 
@@ -495,44 +594,65 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             FLOATING_ADD:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        temp_fp = $shortrealtobits($bitstoshortreal(in_RA[i*WORD +: WORD]) + $bitstoshortreal(in_RB[i*WORD +: WORD]));
+                        temp_fp = $bitstoshortreal(in_RA[i*WORD +: WORD]) + $bitstoshortreal(in_RB[i*WORD +: WORD]);
                         if (temp_fp < -S_MAX)                         RT_reg[i*WORD +: WORD] = -S_MAX;
                         else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] = S_MAX;
                         else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] = 0;
-                        else                                          RT_reg[i*WORD +: WORD] = temp_fp;
+                        else                                          RT_reg[i*WORD +: WORD] = $shortrealtobits(temp_fp);
                     end
+                    unit_idx = 3'd3;
                     rt_wr_en = 1;
                 end
 
             FLOATING_SUBTRACT:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        RT_reg[i*WORD +: WORD] = $shortrealtobits($bitstoshortreal(in_RA[i*WORD +: WORD]) - $bitstoshortreal(in_RB[i*WORD +: WORD]));
+                        temp_fp = $bitstoshortreal(in_RA[i*WORD +: WORD]) - $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        if (temp_fp < -S_MAX)                         RT_reg[i*WORD +: WORD] = -S_MAX;
+                        else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] = S_MAX;
+                        else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] = 0;
+                        else                                          RT_reg[i*WORD +: WORD] = $shortrealtobits(temp_fp);
                     end
+                    unit_idx = 3'd3;
                     rt_wr_en = 1;
                 end
 
             FLOATING_MULTIPLY:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        RT_reg[i*WORD +: WORD] = $shortrealtobits($bitstoshortreal(in_RA[i*WORD +: WORD]) * $bitstoshortreal(in_RB[i*WORD +: WORD]));
+                        temp_fp = $bitstoshortreal(in_RA[i*WORD +: WORD]) * $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        if (temp_fp < -S_MAX)                         RT_reg[i*WORD +: WORD] = -S_MAX;
+                        else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] = S_MAX;
+                        else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] = 0;
+                        else                                          RT_reg[i*WORD +: WORD] = $shortrealtobits(temp_fp);
                     end
+                    unit_idx = 3'd3;
                     rt_wr_en = 1;
                 end
 
             FLOATING_MULTIPLY_AND_ADD:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        RT_reg[i*WORD +: WORD] = $shortrealtobits(($bitstoshortreal(in_RA[i*WORD +: WORD]) * $bitstoshortreal(in_RB[i*WORD +: WORD])) + $bitstoshortreal(in_RC[i*WORD +: WORD]));
+                        temp_fp = ($bitstoshortreal(in_RA[i*WORD +: WORD]) * $bitstoshortreal(in_RB[i*WORD +: WORD])) + $bitstoshortreal(in_RC[i*WORD +: WORD]);
+                        if (temp_fp < -S_MAX)                         RT_reg[i*WORD +: WORD] = -S_MAX;
+                        else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] = S_MAX;
+                        else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] = 0;
+                        else                                          RT_reg[i*WORD +: WORD] = $shortrealtobits(temp_fp);
                     end
+                    unit_idx = 3'd3;
                     rt_wr_en = 1;
                 end
 
             FLOATING_MULTIPLY_AND_SUBTRACT:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        RT_reg[i*WORD +: WORD] = $shortrealtobits(($bitstoshortreal(in_RA[i*WORD +: WORD]) * $bitstoshortreal(in_RB[i*WORD +: WORD])) - $bitstoshortreal(in_RC[i*WORD +: WORD]));
+                        temp_fp = ($bitstoshortreal(in_RA[i*WORD +: WORD]) * $bitstoshortreal(in_RB[i*WORD +: WORD])) - $bitstoshortreal(in_RC[i*WORD +: WORD]);
+                        if (temp_fp < -S_MAX)                         RT_reg[i*WORD +: WORD] = -S_MAX;
+                        else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] = S_MAX;
+                        else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] = 0;
+                        else                                          RT_reg[i*WORD +: WORD] = $shortrealtobits(temp_fp);
                     end
+                    unit_idx = 3'd3;
                     rt_wr_en = 1;
                 end
 
@@ -547,6 +667,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                         end
                         RT_reg[i*BYTE +: BYTE] = cnt_reg;
                     end
+                    unit_idx = 3'd4;
                     rt_wr_en = 1;
                 end
 
@@ -555,6 +676,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 16; i++) begin
                         RT_reg[i*BYTE +: BYTE] = ({8'd0, in_RA[i*BYTE +: BYTE]} + {8'd0, in_RB[i*BYTE +: BYTE]} + 1) >> 1;
                     end
+                    unit_idx = 3'd4;
                     rt_wr_en = 1;
                 end
 
@@ -568,6 +690,8 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                             RT_reg[i*BYTE +: BYTE] = in_RA[i*BYTE +: BYTE] - in_RB[i*BYTE +: BYTE];
                         end
                     end
+                    unit_idx = 3'd4;
+                    rt_wr_en = 1;
                 end
 
             SUM_BYTES_INTO_HALFWORDS:
@@ -576,6 +700,8 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                             RT_reg[(2*i+0)*HALFWORD +: HALFWORD] = in_RB[(4*i+0)*BYTE +: BYTE] + in_RB[(4*i+1)*BYTE +: BYTE] + in_RB[(4*i+2)*BYTE +: BYTE] + in_RB[(4*i+3)*BYTE +: BYTE];
                             RT_reg[(2*i+1)*HALFWORD +: HALFWORD] = in_RB[(4*i+0)*BYTE +: BYTE] + in_RB[(4*i+1)*BYTE +: BYTE] + in_RB[(4*i+2)*BYTE +: BYTE] + in_RB[(4*i+3)*BYTE +: BYTE];
                     end
+                    unit_idx = 3'd4;
+                    rt_wr_en = 1;
                 end
 
             //Shift Unit
@@ -589,6 +715,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     else begin
                         RT_reg = 'd0;
                     end
+                    unit_idx = 3'd2;
                     rt_wr_en = 1;
                 end
 
@@ -602,6 +729,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     else begin
                         RT_reg = 'd0;
                     end
+                    unit_idx = 3'd2;
                     rt_wr_en = 1;
                 end
 
@@ -615,6 +743,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                             RT_reg[i*WORD +: WORD] = 'd0;
                         end
                     end
+                    unit_idx = 3'd2;
                     rt_wr_en = 1;
                 end
 
@@ -628,6 +757,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     else begin
                         RT_reg = 'd0;
                     end
+                    unit_idx = 3'd2;
                     rt_wr_en = 1;
                 end
 
@@ -646,6 +776,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                         end
                         RT_reg[i*WORD +: WORD] = operand;
                     end
+                    unit_idx = 3'd2;
                     rt_wr_en = 1;
                 end
 
@@ -664,6 +795,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                         end
                         RT_reg[i*WORD +: WORD] = operand;
                     end
+                    unit_idx = 3'd2;
                     rt_wr_en = 1;
                 end
 

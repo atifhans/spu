@@ -43,12 +43,19 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     output logic [127:0]             rf_data_s5_op,
     output logic [127:0]             rf_data_s6_op,
     output logic [127:0]             rf_data_s7_op,
+    output logic [0:2]               rf_idx_s2_op,
+    output logic [0:2]               rf_idx_s3_op,
+    output logic [0:2]               rf_idx_s4_op,
+    output logic [0:2]               rf_idx_s5_op,
+    output logic [0:2]               rf_idx_s6_op,
+    output logic [0:2]               rf_idx_s7_op,
     output logic [6:0]               out_RT_addr,
     output logic [127:0]             out_RT
 );
 
 
     logic            rt_wr_en;
+    logic [0:2]      rf_idx_s1_op;
     logic [6:0]      rf_addr_s1_op;
     logic [127:0]    rf_data_s1_op;
     logic            rf_s1_we;
@@ -59,6 +66,8 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     logic            rf_s6_we;
     logic            rf_s7_we;
     logic [127:0]    RT_reg;
+
+    logic [2:0]      unit_idx;
 // Shift Rotate variables
     logic [127:0]    result;
     logic [127:0]    result_temp;
@@ -80,6 +89,13 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
             rf_data_s5_op <= 'd0;
             rf_data_s6_op <= 'd0;
             rf_data_s7_op <= 'd0;
+            rf_idx_s1_op  <= 'd0;
+            rf_idx_s2_op  <= 'd0;
+            rf_idx_s3_op  <= 'd0;
+            rf_idx_s4_op  <= 'd0;
+            rf_idx_s5_op  <= 'd0;
+            rf_idx_s6_op  <= 'd0;
+            rf_idx_s7_op  <= 'd0;
             out_RT        <= 'd0;
             rf_s1_we      <= 'd0;
             rf_s2_we      <= 'd0;
@@ -99,6 +115,13 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
             rf_addr_s6_op <= rf_addr_s5_op;
             rf_addr_s7_op <= rf_addr_s6_op;
             out_RT_addr   <= rf_addr_s7_op;
+            rf_idx_s1_op  <= unit_idx;
+            rf_idx_s2_op  <= rf_idx_s1_op;
+            rf_idx_s3_op  <= rf_idx_s2_op;
+            rf_idx_s4_op  <= rf_idx_s3_op;
+            rf_idx_s5_op  <= rf_idx_s4_op;
+            rf_idx_s6_op  <= rf_idx_s5_op;
+            rf_idx_s7_op  <= rf_idx_s6_op;
             rf_data_s1_op <= RT_reg;
             rf_data_s2_op <= rf_data_s1_op;
             rf_data_s3_op <= rf_data_s2_op;
@@ -122,6 +145,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     begin
         rt_wr_en = 'd0;
         RT_reg = 'd0;
+        unit_idx = 'd0;
 
         case(opcode)
 
