@@ -14,13 +14,15 @@ package defines_pkg;
 
     parameter EVENINSFILE = "even_ins_file.txt";
     parameter ODDINSFILE  = "odd_ins_file.txt";
-    parameter NUM_PIPES   = 2;
+    parameter LSLOADFILE  = "ls_load_file.txt";
 
     parameter BYTE       =   8;
     parameter HALFWORD   =  16;
     parameter WORD       =  32;
     parameter DOUBLEWORD =  64;
     parameter QUADWORD   = 128;
+
+    parameter LS_SIZE    = 32000;
 
     parameter S_MAX = 32'h7fffffff;
     parameter S_MIN = 32'h00800000;
@@ -94,6 +96,20 @@ package defines_pkg;
                                  ROTATE_QUADWORD_BY_BITS_IMMEDIATE         = 11'b00111111000,
                                  ROTATE_QUADWORD_BY_BYTES                  = 11'b00111011100,
                                  ROTATE_QUADWORD_BY_BYTES_IMMEDIATE        = 11'b00111111100,
+                                 //Load Store Instructions
+                                 LOAD_QUADWORD_DFORM                       = 11'b00000110100,
+                                 LOAD_QUADWORD_AFORM                       = 11'b00001100001,
+                                 STORE_QUADWORD_DFORM                      = 11'b00000100100,
+                                 STORE_QUADWORD_AFORM                      = 11'b10001000001, //TODO: Added 1 in msb
+                                 BRANCH_RELATIVE_AND_SET_LINK              = 11'b00001100110,
+                                 BRANCH_ABSOLUTE_AND_SET_LINK              = 11'b00001100010,
+                                 BRANCH_INDIRECT                           = 11'b00110101000,
+                                 BRANCH_RELATIVE                           = 11'b00001100100,
+                                 BRANCH_ABSOLUTE                           = 11'b00001100000,
+                                 BRANCH_IF_NOT_ZERO_WORD                   = 11'b10001000010, //TODO: Added 1 in msb
+                                 BRANCH_IF_ZERO_WORD                       = 11'b10001000000, //TODO: Added 1 in msb
+                                 BRANCH_IF_NOT_ZERO_HALFWORD               = 11'b10001000110, //TODO: Added 1 in msb
+                                 BRANCH_IF_ZERO_HALFWORD                   = 11'b10001000100, //TODO: Added 1 in msb
                                  //Control
                                  LNOP                                      = 11'b00000000001,
                                  NOP                                       = 11'b01000000001,

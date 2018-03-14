@@ -34,6 +34,8 @@ module spu_pipes_tb();
     logic [9:0]            in_I10o;
     logic [15:0]           in_I16o;
     logic [17:0]           in_I18o;
+    logic [0:31]           PC_wr;
+    logic [0:31]           PC_rd;
 
     logic [56:0]           ins_ep[10];
     logic [56:0]           ins_op[10];
@@ -53,6 +55,8 @@ module spu_pipes_tb();
         .rb_addr_op(rb_addr_op),
         .rc_addr_op(rc_addr_op),
         .rt_addr_op(rt_addr_op),
+        .PC_in(PC_rd),
+        .PC_out(PC_wr),
         .in_I7e(in_I7e),
         .in_I8e(in_I8e),
         .in_I10e(in_I10e),
@@ -88,6 +92,7 @@ module spu_pipes_tb();
         in_I10o = 0;
         in_I16o = 0;
         in_I18o = 0;
+        PC_rd = 0;
         $readmemb(EVENINSFILE, ins_ep);
         $readmemb(ODDINSFILE, ins_op);
 
@@ -111,7 +116,7 @@ module spu_pipes_tb();
             rc_addr_op = ins_op[i][13:7];
             rb_addr_op = ins_op[i][20:14];
             ra_addr_op = ins_op[i][27:21];
-            in_I18o    = ins_ep[i][45:28];
+            in_I18o    = ins_op[i][45:28];
             in_I16o    = in_I18o[15:0];
             in_I10o    = in_I18o[9:0];
             in_I8o     = in_I18o[7:0];

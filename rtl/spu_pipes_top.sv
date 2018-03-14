@@ -1,5 +1,5 @@
 // ------------------------------------------//
-// Shift Rotate unit File for SPU-Lite Processor
+//  
 // ------------------------------------------//
 // Authors:
 // NAME:  Atif Iqbal
@@ -37,7 +37,9 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
     input  logic [0:7]               in_I8o,
     input  logic [0:9]               in_I10o,
     input  logic [0:15]              in_I16o,
-    input  logic [0:17]              in_I18o
+    input  logic [0:17]              in_I18o,
+    input  logic [0:31]              PC_in,
+    output logic [0:31]              PC_out
 );
 
     logic                  rt_wr_en_ep;
@@ -94,6 +96,20 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
     logic [0:2]            rf_idx_s5_op;
     logic [0:2]            rf_idx_s6_op;
     logic [0:2]            rf_idx_s7_op;
+    logic [0:127]          ls_data_wr;
+    logic [0:127]          ls_data_rd;
+    logic [0:31]           ls_addr;
+    logic                  ls_wr_en;
+    logic                  flush;
+
+    ls_and_cache u_ls_and_cache (
+        .clk          ( clk         ),
+        .rst          ( rst         ),
+        .ls_data_wr   ( ls_data_wr  ),
+        .ls_data_rd   ( ls_data_rd  ),
+        .ls_addr      ( ls_addr     ),
+        .ls_wr_en     ( ls_wr_en    )
+    );
 
     reg_file u_reg_file (
         .clk          ( clk         ),
@@ -197,6 +213,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .in_I16        (in_I16e),
         .in_I18        (in_I18e),
         .in_RT_addr    (rt_addr_ep),
+        .flush         ( flush  ),
         .rf_addr_s2_ep ( rf_addr_s2_ep ),
         .rf_addr_s3_ep ( rf_addr_s3_ep ),
         .rf_addr_s4_ep ( rf_addr_s4_ep ),
@@ -232,6 +249,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .in_I10        (in_I10o),
         .in_I16        (in_I16o),
         .in_I18        (in_I18o),
+        .flush         ( flush  ),
         .in_RT_addr    (rt_addr_op),
         .rf_addr_s2_op ( rf_addr_s2_op ),
         .rf_addr_s3_op ( rf_addr_s3_op ),
@@ -251,8 +269,14 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .rf_idx_s5_op  ( rf_idx_s5_op  ),
         .rf_idx_s6_op  ( rf_idx_s6_op  ),
         .rf_idx_s7_op  ( rf_idx_s7_op  ),
-        .out_RT_addr   (rt_fw_addr_op),
-        .out_RT        (rt_wr_op)
+        .in_ls_data    ( ls_data_rd    ),
+        .out_ls_addr   ( ls_addr       ),
+        .out_ls_data   ( ls_data_wr    ),
+        .out_ls_wr_en  ( ls_wr_en      ),
+        .PC_in         ( PC_in         ),
+        .PC_out        ( PC_out        ),
+        .out_RT_addr   ( rt_fw_addr_op ),
+        .out_RT        ( rt_wr_op      )
     );
 
 endmodule

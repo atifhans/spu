@@ -56,9 +56,14 @@ def run_syn(name, clk):
 
 def run_sim():
     lname = gen_sim_script(name)
+    os.chdir("cfg")
+    #subprocess.call(["./conv.py", "even_ins.sasm", ">", "even_ins_file.txt"])
+    #subprocess.call(["./conv.py", "odd_ins.sasm", ">", "even_ins_file.txt"])
+    os.chdir("..")
     os.chdir("sim")
     subprocess.call(["cp", "-rf", "../cfg/even_ins_file.txt", "."])
     subprocess.call(["cp", "-rf", "../cfg/odd_ins_file.txt", "."])
+    subprocess.call(["cp", "-rf", "../cfg/ls_load_file.txt", "."])
     subprocess.call(["./runsim"])
     #p1 = subprocess.Popen(["./runsim"], stdout=subprocess.PIPE)
     #p2 = subprocess.Popen(["tee", lname], stdin=p1.stdout, stdout=subprocess.PIPE)

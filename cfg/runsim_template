@@ -8,5 +8,6 @@ vlog +acc ../rtl/reg_file.sv
 vlog +acc ../rtl/fw_macro.sv
 vlog +acc ../rtl/odd_pipe.sv
 vlog +acc ../rtl/spu_pipes_top.sv
+vlog +acc ../rtl/ls_and_cache.sv
 vlog +acc ../tb/spu_pipes_tb.sv
 vsim -c {ARG0} -do "run -all; quit"
