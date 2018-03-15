@@ -8,14 +8,17 @@ from subprocess import call
 
 my_dict = {}
 fname = sys.argv[1]
+fout = sys.argv[2]
 
 with open("opcodes.txt", 'r') as f:
     for line in f:
         items = line.split()
         key, values = items[0], items[1]
         my_dict[key] = values
+    f.close()
 
 with open(fname) as f:
+    fw = open(fout, 'w')
     for line in f:
         words = line.split()
         idx = 0
@@ -29,5 +32,8 @@ with open(fname) as f:
                 idx = 2
             else:
                 mcode += str(bin(int(word))[2:].zfill(7))
-        print mcode
+        #print mcode
+        fw.write(mcode + "\n")
+    fw.close()
+    f.close()
 

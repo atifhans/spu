@@ -37,8 +37,8 @@ module spu_pipes_tb();
     logic [0:31]           PC_wr;
     logic [0:31]           PC_rd;
 
-    logic [56:0]           ins_ep[10];
-    logic [56:0]           ins_op[10];
+    logic [56:0]           ins_ep[NUM_INS];
+    logic [56:0]           ins_op[NUM_INS];
 
     always #5 clk = ~clk;
 
@@ -72,8 +72,6 @@ module spu_pipes_tb();
     initial begin
         clk = 0;
         rst = 0;
-        //opcode_ep = 0;
-        //opcode_op = 0;
         ra_addr_ep = 0;
         rb_addr_ep = 0;
         rc_addr_ep = 0;
@@ -99,7 +97,7 @@ module spu_pipes_tb();
         @(posedge clk) rst = 1;
         @(posedge clk) rst = 0;
 
-        for(int i = 0; i < 5; i++)  begin
+        for(int i = 0; i < NUM_INS; i++)  begin
             @(posedge clk);
             opcode_ep  = Opcodes'(ins_ep[i][56:46]);
             rt_addr_ep = ins_ep[i][6:0];

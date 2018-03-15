@@ -12,6 +12,7 @@
 
 package defines_pkg;
 
+    parameter NUM_INS = 100;
     parameter EVENINSFILE = "even_ins_file.txt";
     parameter ODDINSFILE  = "odd_ins_file.txt";
     parameter LSLOADFILE  = "ls_load_file.txt";

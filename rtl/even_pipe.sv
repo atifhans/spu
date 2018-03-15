@@ -192,6 +192,12 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
         rt_wr_en = 'd0;
         RT_reg = 'd0;
         unit_idx = 'd0;
+        cnt_reg = 'd0;
+
+        operand = 'd0;
+        result = 'd0;
+        rotate = 'd0;
+        rotate_temp = 'd0;
 
         case(opcode)
 
@@ -803,6 +809,11 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                 begin
                     //No Operation
                     rt_wr_en = 0;
+                end
+
+            STOP:
+                begin
+                    $finish;
                 end
 
         endcase

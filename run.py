@@ -35,48 +35,20 @@ def run_syn(name, clk):
     lname = gen_syn_script(name, clk)
     os.chdir("synth")
     subprocess.call(["dc_shell", "-f", "runsynth.tcl"])
-    #p1 = subprocess.Popen(["dc_shell", "-f", "synth/runsynth.tcl"], stdout=subprocess.PIPE)
-    #p2 = subprocess.Popen(["tee", lname], stdin=p1.stdout, stdout=subprocess.PIPE)
-    #p1.stdout.close()
-    #p2.communicate()
     os.chdir("..")
-
-    #with open(lname) as f:
-    #    for line in f:
-    #        if "Error" in line:
-    #            print line
-    #        elif "/CK" in line:
-    #            print line
-    #        elif "Warning" in line and "signed" not in line and "tran" not in line:
-    #            print line
-    #        elif "Total" in line and "undefined" not in line and "Dynamic" not in line:
-    #            print line
-    #        elif "slack" in line:
-    #            print line
 
 def run_sim():
     lname = gen_sim_script(name)
     os.chdir("cfg")
-    #subprocess.call(["./conv.py", "even_ins.sasm", ">", "even_ins_file.txt"])
-    #subprocess.call(["./conv.py", "odd_ins.sasm", ">", "even_ins_file.txt"])
+    subprocess.call(["./conv.py", "even_ins.sasm", "even_ins_file.txt"])
+    subprocess.call(["./conv.py", "odd_ins.sasm", "odd_ins_file.txt"])
     os.chdir("..")
     os.chdir("sim")
     subprocess.call(["cp", "-rf", "../cfg/even_ins_file.txt", "."])
     subprocess.call(["cp", "-rf", "../cfg/odd_ins_file.txt", "."])
     subprocess.call(["cp", "-rf", "../cfg/ls_load_file.txt", "."])
     subprocess.call(["./runsim"])
-    #p1 = subprocess.Popen(["./runsim"], stdout=subprocess.PIPE)
-    #p2 = subprocess.Popen(["tee", lname], stdin=p1.stdout, stdout=subprocess.PIPE)
-    #p1.stdout.close()
-    #p2.communicate()
     os.chdir("..")
-
-    #with open(lname) as f:
-    #    for line in f:
-    #        if "errors" in line:
-    #            print line
-    #        elif "Throughput" in line:
-    #            print line
 
 def print_usage():
     print sys.argv[0] + " flow [Top Module] [Clock]"
