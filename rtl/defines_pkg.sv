@@ -25,8 +25,8 @@ package defines_pkg;
 
     parameter LS_SIZE    = 32000;
 
-    parameter S_MAX = 32'h7fffffff;
-    parameter S_MIN = 32'h00800000;
+    shortreal S_MAX = $bitstoshortreal(32'h7fffffff);
+    shortreal S_MIN = $bitstoshortreal(32'h00800000);
 
     typedef enum logic [10:0] {  //Simple Fixed Instructions
                                  IMMEDIATE_LOAD_HALFWORD                   = 11'b00010000011,

@@ -88,15 +88,12 @@ add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_odd_pipe/rf_s4_we
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_odd_pipe/rf_s5_we
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_odd_pipe/rf_s6_we
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_odd_pipe/rf_s7_we
-add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_odd_pipe/rst
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_odd_pipe/rt_wr_en
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_odd_pipe/rt_wr_en_op
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_odd_pipe/unit_idx
 add wave -noupdate -divider {Even Pipe}
-add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/RT_reg
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/clk
-add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/cnt_reg
-add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/flush
+add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/opcode
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/in_I10
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/in_I16
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/in_I18
@@ -106,12 +103,15 @@ add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/in_RA
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/in_RB
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/in_RC
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/in_RT_addr
-add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/opcode
+add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/RT_reg
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/out_RT
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/out_RT_addr
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rep_lb16_I10
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rep_lb32_I10
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rep_lb32_I16
+add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/unit_idx
+add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/flush
+add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/cnt_reg
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/result
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_addr_s1_ep
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_addr_s2_ep
@@ -134,6 +134,7 @@ add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_idx_s4_ep
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_idx_s5_ep
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_idx_s6_ep
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_idx_s7_ep
+add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rt_wr_en
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_s1_we
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_s2_we
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_s3_we
@@ -141,7 +142,6 @@ add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_s4_we
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_s5_we
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_s6_we
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rf_s7_we
-add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rt_wr_en
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rt_wr_en_ep
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/operand
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rotate
@@ -149,7 +149,6 @@ add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/rotate_temp
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/temp_byte_reg
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/temp_fp
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/temp_reg
-add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_even_pipe/unit_idx
 add wave -noupdate -divider {FW Macro}
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_fw_macro/rf_addr_s2_ep
 add wave -noupdate /spu_pipes_tb/u_spu_pipes_top/u_fw_macro/rf_addr_s3_ep
@@ -239,7 +238,7 @@ add wave -noupdate /spu_pipes_tb/rst
 add wave -noupdate /spu_pipes_tb/rt_addr_ep
 add wave -noupdate /spu_pipes_tb/rt_addr_op
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {55 ns} 0}
+WaveRestoreCursors {{Cursor 1} {90 ns} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 162
 configure wave -valuecolwidth 100
@@ -255,4 +254,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {44 ns} {98 ns}
+WaveRestoreZoom {0 ns} {136 ns}

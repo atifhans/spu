@@ -30,10 +30,12 @@ module ls_and_cache #(parameter MEM_SIZE = LS_SIZE/16)
     end
 
     always_ff @(posedge clk) begin
-        ls_mem[ls_addr] <= ls_data_wr;
+        if(ls_wr_en) begin
+            ls_mem[ls_addr] <= ls_data_wr;
+        end
     end
 
-    assign ls_data_rd = ls_mem[ls_addr];
+    assign ls_data_rd = (ls_wr_en) ? ls_data_wr : ls_mem[ls_addr];
 
 endmodule
 //end of file.
