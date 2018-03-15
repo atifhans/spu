@@ -77,6 +77,10 @@ package defines_pkg;
                                  FLOATING_MULTIPLY                         = 11'b01011000110,
                                  FLOATING_MULTIPLY_AND_ADD                 = 11'b00000001110,
                                  FLOATING_MULTIPLY_AND_SUBTRACT            = 11'b00000001111,
+                                 FLOATING_COMPARE_EQUAL                    = 11'b01111000010,
+                                 FLOATING_COMPARE_MAGNITUDE_EQUAL          = 11'b01111001010,
+                                 FLOATING_COMPARE_GREATER_THAN             = 11'b01011000010,
+                                 FLOATING_COMPARE_MAGNITUDE_GREATER_THAN   = 11'b01011001010,
                                  //Byte Unit
                                  COUNT_ONES_IN_BYTES                       = 11'b01010110100,
                                  AVERAGE_BYTES                             = 11'b00011010011,
@@ -112,6 +116,7 @@ package defines_pkg;
                                  BRANCH_IF_NOT_ZERO_HALFWORD               = 11'b10001000110, //TODO: Added 1 in msb
                                  BRANCH_IF_ZERO_HALFWORD                   = 11'b10001000100, //TODO: Added 1 in msb
                                  //Control
+                                 CMISS                                     = 11'b11111111111,
                                  LNOP                                      = 11'b00000000001,
                                  NOP                                       = 11'b01000000001,
                                  STOP                                      = 11'b00000000000

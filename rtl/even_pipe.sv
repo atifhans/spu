@@ -70,6 +70,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     logic [0:7]      cnt_reg;
     logic [0:2]      unit_idx;
     real             temp_fp;
+    real             temp_fpe;
 
     logic [0:WORD-1]     rep_lb32_I16;
     logic [0:HALFWORD-1] rep_lb16_I10;
@@ -657,6 +658,74 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                         else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] = S_MAX;
                         else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] = 0;
                         else                                          RT_reg[i*WORD +: WORD] = $shortrealtobits(temp_fp);
+                    end
+                    unit_idx = 3'd3;
+                    rt_wr_en = 1;
+                end
+
+            FLOATING_COMPARE_EQUAL:
+                begin
+                    for(int i=0; i < 4; i++) begin
+                        temp_fp  = $bitstoshortreal(in_RA[i*WORD +: WORD]);
+                        temp_fpe = $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        if (temp_fp == temp_fpe || (temp_fp < 1 && temp_fpe < 1)) begin
+                            RT_reg[i*WORD +: WORD] = 32'hffffffff;
+                        end
+                        else begin
+                            RT_reg[i*WORD +: WORD] = 32'h00000000;
+                        end
+                    end
+                    unit_idx = 3'd3;
+                    rt_wr_en = 1;
+                end
+
+            FLOATING_COMPARE_MAGNITUDE_EQUAL:
+                begin
+                    for(int i=0; i < 4; i++) begin
+                        temp_fp  = $bitstoshortreal(in_RA[i*WORD +: WORD]);
+                        temp_fpe = $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        temp_fp  = (temp_fp  >= 0) ? temp_fp  : -temp_fp; 
+                        temp_fpe = (temp_fpe >= 0) ? temp_fpe : -temp_fpe; 
+                        if (temp_fp == temp_fpe || (temp_fp < 1 && temp_fpe < 1)) begin
+                            RT_reg[i*WORD +: WORD] = 32'hffffffff;
+                        end
+                        else begin
+                            RT_reg[i*WORD +: WORD] = 32'h00000000;
+                        end
+                    end
+                    unit_idx = 3'd3;
+                    rt_wr_en = 1;
+                end
+
+            FLOATING_COMPARE_GREATER_THAN:
+                begin
+                    for(int i=0; i < 4; i++) begin
+                        temp_fp  = $bitstoshortreal(in_RA[i*WORD +: WORD]);
+                        temp_fpe = $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        if (temp_fp > temp_fpe && !(temp_fp < 1 && temp_fpe < 1)) begin
+                            RT_reg[i*WORD +: WORD] = 32'hffffffff;
+                        end
+                        else begin
+                            RT_reg[i*WORD +: WORD] = 32'h00000000;
+                        end
+                    end
+                    unit_idx = 3'd3;
+                    rt_wr_en = 1;
+                end
+
+            FLOATING_COMPARE_MAGNITUDE_GREATER_THAN:
+                begin
+                    for(int i=0; i < 4; i++) begin
+                        temp_fp  = $bitstoshortreal(in_RA[i*WORD +: WORD]);
+                        temp_fpe = $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        temp_fp  = (temp_fp  >= 0) ? temp_fp  : -temp_fp; 
+                        temp_fpe = (temp_fpe >= 0) ? temp_fpe : -temp_fpe; 
+                        if (temp_fp > temp_fpe && !(temp_fp < 1 && temp_fpe < 1)) begin
+                            RT_reg[i*WORD +: WORD] = 32'hffffffff;
+                        end
+                        else begin
+                            RT_reg[i*WORD +: WORD] = 32'h00000000;
+                        end
                     end
                     unit_idx = 3'd3;
                     rt_wr_en = 1;
