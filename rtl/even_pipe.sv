@@ -70,6 +70,9 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     logic [0:7]      cnt_reg;
     logic [0:2]      unit_idx;
     real             temp_fp;
+    real             temp_op1;
+    real             temp_op2;
+    real             temp_op3;
     real             temp_fpe;
 
     logic [0:WORD-1]     rep_lb32_I16;
@@ -601,7 +604,9 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             FLOATING_ADD:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        temp_fp = $bitstoshortreal(in_RA[i*WORD +: WORD]) + $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        temp_op1 = $bitstoshortreal(in_RA[i*WORD +: WORD]);
+                        temp_op2 = $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        temp_fp = temp_op1 + temp_op2;
                         if (temp_fp < -S_MAX)                         RT_reg[i*WORD +: WORD] = -$shortrealtobits(S_MAX);
                         else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] =  $shortrealtobits(S_MAX);
                         else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] =  0;
@@ -614,7 +619,9 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             FLOATING_SUBTRACT:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        temp_fp = $bitstoshortreal(in_RA[i*WORD +: WORD]) - $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        temp_op1 = $bitstoshortreal(in_RA[i*WORD +: WORD]);
+                        temp_op2 = $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        temp_fp = temp_op1 - temp_op2;
                         if (temp_fp < -S_MAX)                         RT_reg[i*WORD +: WORD] = -$shortrealtobits(S_MAX);
                         else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] =  $shortrealtobits(S_MAX);
                         else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] =  0;
@@ -627,7 +634,9 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             FLOATING_MULTIPLY:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        temp_fp = $bitstoshortreal(in_RA[i*WORD +: WORD]) * $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        temp_op1 = $bitstoshortreal(in_RA[i*WORD +: WORD]);
+                        temp_op2 = $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        temp_fp = temp_op1 * temp_op2;
                         if (temp_fp < -S_MAX)                         RT_reg[i*WORD +: WORD] = -$shortrealtobits(S_MAX);
                         else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] =  $shortrealtobits(S_MAX);
                         else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] =  0;
@@ -640,7 +649,10 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             FLOATING_MULTIPLY_AND_ADD:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        temp_fp = ($bitstoshortreal(in_RA[i*WORD +: WORD]) * $bitstoshortreal(in_RB[i*WORD +: WORD])) + $bitstoshortreal(in_RC[i*WORD +: WORD]);
+                        temp_op1 = $bitstoshortreal(in_RA[i*WORD +: WORD]);
+                        temp_op2 = $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        temp_op3 = $bitstoshortreal(in_RC[i*WORD +: WORD]);
+                        temp_fp = temp_op1 * temp_op2 + temp_op3;
                         if (temp_fp < -S_MAX)                         RT_reg[i*WORD +: WORD] = -$shortrealtobits(S_MAX);
                         else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] =  $shortrealtobits(S_MAX);
                         else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] =  0;
@@ -653,7 +665,10 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             FLOATING_MULTIPLY_AND_SUBTRACT:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        temp_fp = ($bitstoshortreal(in_RA[i*WORD +: WORD]) * $bitstoshortreal(in_RB[i*WORD +: WORD])) - $bitstoshortreal(in_RC[i*WORD +: WORD]);
+                        temp_op1 = $bitstoshortreal(in_RA[i*WORD +: WORD]);
+                        temp_op2 = $bitstoshortreal(in_RB[i*WORD +: WORD]);
+                        temp_op3 = $bitstoshortreal(in_RC[i*WORD +: WORD]);
+                        temp_fp = temp_op1 * temp_op2 - temp_op3;
                         if (temp_fp < -S_MAX)                         RT_reg[i*WORD +: WORD] = -$shortrealtobits(S_MAX);
                         else if (temp_fp > S_MAX)                     RT_reg[i*WORD +: WORD] =  $shortrealtobits(S_MAX);
                         else if (temp_fp > -S_MIN && temp_fp < S_MIN) RT_reg[i*WORD +: WORD] =  0;

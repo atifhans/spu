@@ -40,6 +40,7 @@ module reg_file #(parameter NUM_REGS = 128,
 
     logic [127:0] reg_array[128];
 
+    /*
     always_ff @(posedge clk)
     begin
         if(rst) begin
@@ -68,6 +69,35 @@ module reg_file #(parameter NUM_REGS = 128,
 
         if(rt_wr_en_op) begin
             reg_array[rt_addr_op] = rt_wr_op;
+        end
+    end
+    */
+
+    always_comb 
+    begin
+        ra_rd_ep = reg_array[ra_addr_ep];
+        rb_rd_ep = reg_array[rb_addr_ep];
+        rc_rd_ep = reg_array[rc_addr_ep];
+        ra_rd_op = reg_array[ra_addr_op];
+        rb_rd_op = reg_array[rb_addr_op];
+        rc_rd_op = reg_array[rc_addr_op];
+    end
+
+    always_ff @(posedge clk) 
+    begin
+        if(rst) begin
+            for(int i = 0; i < 128; i++) begin
+                reg_array[i] <= 'd0;
+            end
+        end
+        else begin
+            if(rt_wr_en_ep) begin
+                reg_array[rt_addr_ep] <= rt_wr_ep;
+            end
+
+            if(rt_wr_en_op) begin
+                reg_array[rt_addr_op] <= rt_wr_op;
+            end
         end
     end
 
