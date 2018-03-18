@@ -780,16 +780,17 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                 end
 
             //Shift Unit
-            SHIFT_LEFT_HALFWORD: //TODO: this is wrong!
+            SHIFT_LEFT_HALFWORD: 
                 begin
-                    if(in_I7[0:4] < 16) begin
                         for(int i=0; i < 8; i++) begin
-                            RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] << in_I7[0:4];
-                        end
+                          if(in_RB[i*HALFWORD+26 +: 6] < 16) begin
+                            RT_reg[i*HALFWORD +: HALFWORD] = in_RA[i*HALFWORD +: HALFWORD] << in_RB[i*HALFWORD+26 +: 6];
+                          end
+                          else begin
+                            RT_reg[i*HALFWORD +: HALFWORD] = 'd0;
+                          end
                     end
-                    else begin
-                        RT_reg = 'd0;
-                    end
+               
                     unit_idx = 3'd2;
                     rt_wr_en = 1;
                 end
@@ -811,8 +812,8 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             SHIFT_LEFT_WORD:
                 begin
                     for (int i=0; i < 4; i++) begin
-                        if (in_RB[i*WORD +: 4] < 32) begin
-                            RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] << in_RB[i*WORD +: 4];
+                        if (in_RB[i*WORD+26 +: 6] < 32) begin
+                            RT_reg[i*WORD +: WORD] = in_RA[i*WORD +: WORD] << in_RB[i*WORD+26 +: 6];
                         end
                         else begin
                             RT_reg[i*WORD +: WORD] = 'd0;
