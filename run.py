@@ -37,11 +37,11 @@ def run_syn(name, clk):
     subprocess.call(["dc_shell", "-f", "runsynth.tcl"])
     os.chdir("..")
 
-def run_sim():
+def run_sim(mode):
     lname = gen_sim_script(name)
     os.chdir("cfg")
-    subprocess.call(["./conv.py", "even_ins.sasm", "even_ins_file.txt"])
-    subprocess.call(["./conv.py", "odd_ins.sasm", "odd_ins_file.txt"])
+    subprocess.call(["./sasm.py", "even_ins.sasm", "even_ins_file.txt", mode])
+    subprocess.call(["./sasm.py", "odd_ins.sasm", "odd_ins_file.txt", mode])
     os.chdir("..")
     os.chdir("sim")
     subprocess.call(["cp", "-rf", "../cfg/even_ins_file.txt", "."])
@@ -55,6 +55,8 @@ def print_usage():
     print "flow:  sim, syn"
     print "<sim> target expects top module name only"
     print "<syn> target requires both top module and clock"
+
+print "!!Welcome to SPU Mini Simulation Script"
 
 if(len(sys.argv) == 1):
     print "Invalid number of arguments"
@@ -78,12 +80,18 @@ elif flow == "sim":
         print_usage()
         sys.exit(0)
     name = sys.argv[2]
+    if(name == "sp_pipes_tb"):
+        mode = "1"
+    else:
+        mode = "0"
     print "Running Simulation on module " + name
-    run_sim()
+    run_sim(mode)
 elif flow == "clean":
     print "Cleaning Temp Files!"
     subprocess.call(["rm", "-rf", "synth/*", "sim/*"])
 else:
     print "Invalid Argument: " + flow
+
+print "!!SPU Mini Simulation Script finished sucessfully!!"
 
 
