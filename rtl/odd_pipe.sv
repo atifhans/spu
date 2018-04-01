@@ -54,6 +54,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     input  logic [0:127]             in_ls_data,
     input  logic [0:31]              PC_in,
     output logic [0:31]              PC_out,
+    output logic                     cache_wr,
     output logic                     out_ls_wr_en,
     output logic [0:31]              out_ls_addr,
     output logic [0:127]             out_ls_data,
@@ -221,6 +222,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
         unit_idx = 'd0;
         flush = 'd0;
         out_ls_wr_en = 'd0;
+        cache_wr = 'd0;
 
         case(opcode)
 
@@ -460,6 +462,13 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
                    end
                    unit_idx = 3'd5;
                    rt_wr_en = 1'b1;
+                end
+            
+             CMISS:
+                begin
+                   cache_wr =  'd1;
+                   out_ls_addr = PC_in;
+                   rt_wr_en = 1'b0;
                 end
 
              NOP:

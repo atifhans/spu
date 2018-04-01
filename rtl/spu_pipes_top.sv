@@ -39,6 +39,11 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
     input  logic [0:15]              in_I16o,
     input  logic [0:17]              in_I18o,
     input  logic [0:31]              PC_in,
+    input  logic [0:127]             ls_data_rd,
+    output logic [0:127]             ls_data_wr,
+    output logic [0:31]              ls_addr,
+    output logic                     ls_wr_en,
+    output logic                     cache_wr,
     output logic [0:31]              PC_out
 );
 
@@ -96,20 +101,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
     logic [0:2]            rf_idx_s5_op;
     logic [0:2]            rf_idx_s6_op;
     logic [0:2]            rf_idx_s7_op;
-    logic [0:127]          ls_data_wr;
-    logic [0:127]          ls_data_rd;
-    logic [0:31]           ls_addr;
-    logic                  ls_wr_en;
     logic                  flush;
-
-    ls_and_cache u_ls_and_cache (
-        .clk          ( clk         ),
-        .rst          ( rst         ),
-        .ls_data_wr   ( ls_data_wr  ),
-        .ls_data_rd   ( ls_data_rd  ),
-        .ls_addr      ( ls_addr     ),
-        .ls_wr_en     ( ls_wr_en    )
-    );
 
     reg_file u_reg_file (
         .clk          ( clk         ),
@@ -275,6 +267,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .out_ls_wr_en  ( ls_wr_en      ),
         .PC_in         ( PC_in         ),
         .PC_out        ( PC_out        ),
+        .cache_wr      ( cache_wr      ),
         .out_RT_addr   ( rt_fw_addr_op ),
         .out_RT        ( rt_wr_op      )
     );

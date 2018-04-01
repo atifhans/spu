@@ -2,6 +2,7 @@
 
 import os
 import sys
+import re
 import subprocess
 
 from subprocess import call
@@ -16,7 +17,7 @@ def print_usage():
     print "<mode> : 0 - Input is in assembly language, for full SPU sim."
     print "       : 1 - Input is in intermediate assembly language, for SPU pipes sim.\n"
 
-print "!!Welcome to SPU Mini Assembler!!"
+print "\n!!Welcome to SPU Mini Assembler!!"
 
 if(len(sys.argv) != 4):
     print "Invalid number of arguments\n"
@@ -64,7 +65,6 @@ with open(fname) as f:
         else:
             #TODO: Have to write special cases for some instructions...
             itype = ins_type[opcode]
-            print itype
             if(itype == "1" or itype == "3"): #RR or RI17
                 syms = words[1].split(',')
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(11))
@@ -112,5 +112,13 @@ with open(fname) as f:
     print "\n"
     fw.close()
     f.close()
+
+with open(fout) as f:
+    fw = open("ls_load_file.txt", 'w')
+    for line in f:
+        by = re.findall('........', line)
+        for word in by:
+            fw.write(word + "\n")
+
 print "!!SPU Mini Assembler finished sucessfully!!\n"
 

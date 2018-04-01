@@ -7,38 +7,34 @@
 // SBUID: 111416569                            
 //
 // NAME: Karthik Raj
-// NETID: ?
-// SBUID: ?
+// NETID: karamachandr 
+// SBUID: 111675685
 // ------------------------------------------//
 
 import defines_pkg::*;
 
-module top_tb();
-
-   parameter OPCODE_LEN = 11;
-   parameter INTS_LEN   = 32;
-
-   parameter PROGFILENAME = "test_prog1.txt";
+module spu_tb();
 
    logic clk;
-   logic reset;
-
-   logic [INTS_LEN-1:0] ints;
+   logic rst;
 
    initial clk=0;
    always #5 clk = ~clk;
-   
-   //TODO: Instantiate DUT
 
+   spu_top u_spu_top (
+       .clk(clk),
+       .rst(rst)
+   );
+   
    initial begin
-     $readmemb(PROGFILENAME, ints);
      
      // reset
-     @(posedge clk); reset = 1; 
-     @(posedge clk); reset = 0; 
+     @(posedge clk); rst = 1; 
+     @(posedge clk); rst = 0; 
 
      repeat(1000) @(posedge clk);
 
+     //TODO: Don't need this..remove this
      $finish;
    end
 

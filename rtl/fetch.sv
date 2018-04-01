@@ -1,0 +1,132 @@
+// ------------------------------------------//
+//  
+// ------------------------------------------//
+// Authors:
+// NAME:  Atif Iqbal
+// NETID: aahangar
+// SBUID: 111416569
+//
+// NAME: Karthik Raj
+// NETID: karamachandr
+// SBUID: 111675685
+// ------------------------------------------//
+
+import defines_pkg::*;
+
+module fetch 
+(
+    input  logic             clk,
+    input  logic             rst,
+    input  logic  [0:1023]   cache_line,
+    input  logic             cache_wr,
+    input  logic             branch_taken,
+    input  logic  [0:31]     pc_in,
+    output logic  [0:31]     pc_out,
+    output logic  [0:31]     eins1,
+    output logic  [0:31]     eins2
+);
+
+    logic [0:63]         cache[32];
+    logic [0:31]         pc;
+    logic [0:7]          blk_tag[2];
+    logic [0:3]          blk_offset[2];
+    logic                blk_valid[2];
+
+    logic [0:7]          tag;
+    logic [0:6]          offset;
+    logic                last_used;
+    logic                chit1;
+    logic                chit2;
+    logic                chit;
+    logic                cmiss;
+    logic                cache_wr_dly;
+
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            cache_wr_dly <= 'd0;
+        end
+        else begin
+            cache_wr_dly <= cache_wr;
+        end
+    end
+
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            pc <= 'd0;
+        end
+        else begin
+            if(branch_taken) begin
+                pc <= pc_in;
+            end
+            else if(!cmiss) begin
+                pc <= pc + 8;
+            end
+        end
+    end
+
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            cache <= '{default:'0};
+            blk_tag <= '{default:'0};
+            blk_valid <= '{default:'0};
+            last_used <= 'd0;
+        end
+        else if(cache_wr_dly) begin
+            if(!blk_valid[0]) begin
+                blk_tag[0] <= tag;
+                blk_valid[0] <= 1;
+                for(int i = 0; i < 16; i++) begin
+                    cache[i] <= cache_line[i*64 +: 64];
+                end
+            end
+            else if(!blk_valid[1]) begin
+                blk_tag[1] <= tag;
+                blk_valid[1] <= 1;
+                for(int i = 0; i < 16; i++) begin
+                    cache[i+16] <= cache_line[(i+16)*64 +: 64];
+                end
+            end
+            else if(last_used) begin
+                blk_tag[0] <= tag;
+                blk_valid[0] <= 1;
+                last_used <= ~last_used;
+                for(int i = 0; i < 16; i++) begin
+                    cache[i] <= cache_line[i*64 +: 64];
+                end
+            end
+            else begin
+                blk_tag[1] <= tag;
+                blk_valid[1] <= 1;
+                last_used <= ~last_used;
+                for(int i = 0; i < 16; i++) begin
+                    cache[i+16] <= cache_line[(i+16)*64 +: 64];
+                end
+            end
+        end
+    end
+
+    always_comb begin
+        //TODO: Use different offset for small memory size
+        tag = pc[19:25];
+        offset = pc[26:31] >> 3;
+        pc_out = pc;
+        chit1 = (tag == blk_tag[0] && blk_valid[0]);
+        chit2 = (tag == blk_tag[1] && blk_valid[1]); 
+        chit  = chit1 || chit2;
+        cmiss = ~chit;
+        if(chit1) begin
+            eins1 = cache[offset][0:31];
+            eins2 = cache[offset][32:63];
+        end
+        else if(chit2) begin
+            eins1 = cache[16 + offset][0:31];
+            eins2 = cache[16 + offset][32:63];
+        end
+        else begin
+            eins1 = 32'hffffffff;
+            eins2 = 32'hffffffff;
+        end
+    end
+
+endmodule
+//end of file.

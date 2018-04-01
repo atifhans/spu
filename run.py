@@ -40,12 +40,16 @@ def run_syn(name, clk):
 def run_sim(mode):
     lname = gen_sim_script(name)
     os.chdir("cfg")
-    subprocess.call(["./sasm.py", "even_ins.sasm", "even_ins_file.txt", mode])
-    subprocess.call(["./sasm.py", "odd_ins.sasm", "odd_ins_file.txt", mode])
+    if(mode == "1"):
+        subprocess.call(["./sasm.py", "even_ins.sasm", "even_ins_file.txt", mode])
+        subprocess.call(["./sasm.py", "odd_ins.sasm", "odd_ins_file.txt", mode])
+    else:
+        subprocess.call(["./sasm.py", "sm_test1.sasm", "sm_test1.txt", mode])
     os.chdir("..")
     os.chdir("sim")
-    subprocess.call(["cp", "-rf", "../cfg/even_ins_file.txt", "."])
-    subprocess.call(["cp", "-rf", "../cfg/odd_ins_file.txt", "."])
+    if(mode == "1"):
+        subprocess.call(["cp", "-rf", "../cfg/even_ins_file.txt", "."])
+        subprocess.call(["cp", "-rf", "../cfg/odd_ins_file.txt", "."])
     subprocess.call(["cp", "-rf", "../cfg/ls_load_file.txt", "."])
     subprocess.call(["./runsim"])
     os.chdir("..")
@@ -56,7 +60,7 @@ def print_usage():
     print "<sim> target expects top module name only"
     print "<syn> target requires both top module and clock"
 
-print "!!Welcome to SPU Mini Simulation Script"
+print "\n!!Welcome to SPU Mini Simulation Script!!"
 
 if(len(sys.argv) == 1):
     print "Invalid number of arguments"
