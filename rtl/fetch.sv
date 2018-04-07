@@ -20,6 +20,7 @@ module fetch
     input  logic  [0:1023]   cache_line,
     input  logic             cache_wr,
     input  logic             branch_taken,
+    input  logic             dec_stall,
     input  logic  [0:31]     pc_in,
     output logic  [0:31]     pc_out,
     output logic  [0:31]     eins1,
@@ -55,7 +56,10 @@ module fetch
             pc <= 'd0;
         end
         else begin
-            if(branch_taken) begin
+            if(dec_stall) begin
+                pc <= pc;
+            end
+            else if(branch_taken) begin
                 pc <= pc_in;
             end
             else if(!cmiss) begin

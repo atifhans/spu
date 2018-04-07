@@ -1,5 +1,7 @@
-ilh 67,9
-br 64
-a 1,2,3
+ila 2,10
+stqd 10,1,5
+mpya 1,2,3,4
+stqd 10,2,5
 ai 16,4,5
+ai 16,4,2
 stop

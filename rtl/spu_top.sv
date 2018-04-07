@@ -51,6 +51,7 @@ module spu_top #(parameter OPCODE_LEN  = 11,
     logic [0:1023]    cache_line;
     logic             ins_wr_en;
     logic             cache_wr;
+    logic             dec_stall;
 
     local_store u_local_store (
         .clk          ( clk         ),
@@ -68,6 +69,7 @@ module spu_top #(parameter OPCODE_LEN  = 11,
         .rst(rst),
         .cache_line(cache_line),
         .cache_wr(cache_wr),
+        .dec_stall(dec_stall),
         .branch_taken(),
         .pc_in(pc_dtof),
         .pc_out(pc_ftod),
@@ -78,6 +80,7 @@ module spu_top #(parameter OPCODE_LEN  = 11,
     decode u_decode (
         .clk(clk),
         .rst(rst),
+        .dec_stall(dec_stall),
         .eins1(eins1),
         .eins2(eins2),
         .opcode_ep(opcode_ep),
