@@ -75,8 +75,8 @@ module decode
     logic [0:7]  eoc2_8b;
     logic [0:8]  eoc1_9b;
     logic [0:8]  eoc2_9b;
-    logic [0:10] eoc1_10b;
-    logic [0:10] eoc2_10b;
+    logic [0:10] eoc1_11b;
+    logic [0:10] eoc2_11b;
 
     logic        ins1_type;
     logic        ins2_type;
@@ -389,6 +389,335 @@ module decode
                     end
             endcase
         end
+        else if(eoc1_9b == 9'b010000011 || eoc1_9b == 9'b010000001 || eoc1_9b == 9'b001100001 ||
+                eoc1_9b == 9'b001000001 || eoc1_9b == 9'b001100110 || eoc1_9b == 9'b001100010 ||
+                eoc1_9b == 9'b001100100 || eoc1_9b == 9'b001100000 || eoc1_9b == 9'b001000010 ||
+                eoc1_9b == 9'b001000000 || eoc1_9b == 9'b001000110 || eoc1_9b == 9'b001000100) begin
+            in_I16_i1  = eins1[9:24];
+            rt_addr_i1 = eins1[25:31];
+            case(eoc1_9b)
+                9'b010000011:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = IMMEDIATE_LOAD_HALFWORD;
+                    end
+                9'b010000001:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = IMMEDIATE_LOAD_WORD;
+                    end
+                9'b001100001:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = LOAD_QUADWORD_AFORM;
+                    end
+                9'b001000001:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = STORE_QUADWORD_AFORM;
+                    end
+                9'b001100110:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = BRANCH_RELATIVE_AND_SET_LINK;
+                    end
+                9'b001100010:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = BRANCH_ABSOLUTE_AND_SET_LINK;
+                    end
+                9'b001100100:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = BRANCH_RELATIVE;
+                    end
+                9'b001100000:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = BRANCH_ABSOLUTE;
+                    end
+                9'b001000010:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = BRANCH_IF_NOT_ZERO_WORD;
+                    end
+                9'b001000000:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = BRANCH_IF_ZERO_WORD;
+                    end
+                9'b001000110:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = BRANCH_IF_NOT_ZERO_HALFWORD;
+                    end
+                9'b001000100:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = BRANCH_IF_ZERO_HALFWORD;
+                    end
+            endcase
+        end
+        else begin
+            rt_addr_i1 = eins1[25:31];
+            ra_addr_i1 = eins1[18:24];
+            rb_addr_i1 = eins1[11:17];
+            case(eoc1_11b) 
+                11'b00011001000: 
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = ADD_HALF_WORD;
+                    end
+                11'b00011000000: 
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = ADD_WORD;
+                    end
+                11'b00001001000:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = SUBTRACT_FROM_HALFWORD;
+                    end
+                11'b00001000000: 
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = SUBTRACT_FROM_WORD;
+                    end
+                11'b01101000000: 
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = ADD_EXTENDED;
+                    end
+                11'b01101000001:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = SUBTRACT_FROM_EXTENDED;
+                    end
+                11'b00011000010: 
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = CARRY_GENERATE;
+                    end
+                11'b00001000010: 
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = BORROW_GENERATE;
+                    end
+                11'b01010100101:
+                    begin
+                        ins1_type  = EVEN;
+                        opcode_i1  = COUNT_LEADING_ZEROS;
+                        rb_addr_i1 = 'dx;
+                    end
+                11'b00011000001: 
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = AND;
+                    end
+                11'b00001000001: 
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = OR;
+                    end
+                11'b01001000001:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = EXCLUSIVE_OR;
+                    end
+                11'b00011001001: 
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = NAND;
+                    end
+                11'b00001001001: 
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = NOR;
+                    end
+                11'b01001001001:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = EQUIVALENT;
+                    end
+                11'b01111000000:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = COMPARE_EQUAL_WORD;
+                    end
+                11'b01111001000:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = COMPARE_EQUAL_HALFWORD;
+                    end
+                11'b01001000000:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = COMPARE_GREATER_THAN_WORD;
+                    end
+                11'b01001001000:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = COMPARE_GREATER_THAN_HALFWORD;
+                    end
+                11'b00001011111:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = SHIFT_LEFT_HALFWORD;
+                    end
+                11'b00001111111:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = SHIFT_LEFT_HALFWORD_IMMEDIATE;
+                        in_I7_i1  = eins1[11:17];
+                        rb_addr_i1 = 'dx;
+                    end
+                11'b00001011011:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = SHIFT_LEFT_WORD;
+                    end
+                11'b00001111011:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = SHIFT_LEFT_WORD_IMMEDIATE;
+                        in_I7_i1  = eins1[11:17];
+                        rb_addr_i1 = 'dx;
+                    end
+                11'b00111011011:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = SHIFT_LEFT_QUADWORD_BY_BITS;
+                    end
+                11'b00111111011:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = SHIFT_LEFT_QUADWORD_BY_BITS_IMMEDIATE;
+                        in_I7_i1  = eins1[11:17];
+                        rb_addr_i1 = 'dx;
+                    end
+                11'b00111011111:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = SHIFT_LEFT_QUADWORD_BY_BYTES;
+                    end
+                11'b00111111111:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = SHIFT_LEFT_QUADWORD_BY_BYTES_IMMEDIATE;
+                        in_I7_i1  = eins1[11:17];
+                        rb_addr_i1 = 'dx;
+                    end
+                11'b00001011000:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = ROTATE_WORD;
+                    end
+                11'b00001111100:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = ROTATE_WORD_IMMEDIATE;
+                        in_I7_i1  = eins1[11:17];
+                        rb_addr_i1 = 'dx;
+                    end
+                11'b00111011000:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = ROTATE_QUADWORD_BY_BITS;
+                    end
+                11'b00111111000:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = ROTATE_QUADWORD_BY_BITS_IMMEDIATE;
+                        in_I7_i1  = eins1[11:17];
+                        rb_addr_i1 = 'dx;
+                    end
+                11'b00111011100:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = ROTATE_QUADWORD_BY_BYTES;
+                    end
+                11'b00111111100:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = ROTATE_QUADWORD_BY_BYTES_IMMEDIATE;
+                        in_I7_i1  = eins1[11:17];
+                        rb_addr_i1 = 'dx;
+                    end
+                11'b00110101000:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = BRANCH_INDIRECT;
+                        ra_addr_i1 = eins1[18:24];
+                        rb_addr_i1 = 'dx;
+                        rt_addr_i1 = 'dx;
+                    end
+                11'b01011000100:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = FLOATING_ADD;
+                    end
+                11'b01011000101:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = FLOATING_SUBTRACT;
+                    end
+                11'b01011000110:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = FLOATING_MULTIPLY;
+                    end
+                11'b01111000010:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = FLOATING_COMPARE_EQUAL;
+                    end
+                11'b01111001010:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = FLOATING_COMPARE_MAGNITUDE_EQUAL;
+                    end
+                11'b01011000010:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = FLOATING_COMPARE_GREATER_THAN;
+                    end
+                11'b01011001010:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = FLOATING_COMPARE_MAGNITUDE_GREATER_THAN;
+                    end
+                11'b01111000100:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = MULTIPLY;
+                    end
+                11'b00000000000:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = STOP;
+                    end
+                11'b01010110100:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = COUNT_ONES_IN_BYTES;
+                    end
+                11'b00011010011:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = AVERAGE_BYTES;
+                    end
+                11'b00001010011:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = ABSOLUTE_DIFFERENCE_OF_BYTES;
+                    end
+                11'b01001010011:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = SUM_BYTES_INTO_HALFWORDS;
+                    end
+            endcase
+        end
 
         if(eins2 == 32'hffffffff) begin
             opcode_i2 = LNOP;
@@ -530,6 +859,335 @@ module decode
                     begin
                         ins2_type = EVEN;
                         opcode_i2  = MULTIPLY_IMMEDIATE;
+                    end
+            endcase
+        end
+        else if(eoc2_9b == 9'b010000011 || eoc2_9b == 9'b010000001 || eoc2_9b == 9'b001100001 ||
+                eoc2_9b == 9'b001000001 || eoc2_9b == 9'b001100110 || eoc2_9b == 9'b001100010 ||
+                eoc2_9b == 9'b001100100 || eoc2_9b == 9'b001100000 || eoc2_9b == 9'b001000010 ||
+                eoc2_9b == 9'b001000000 || eoc2_9b == 9'b001000110 || eoc2_9b == 9'b001000100) begin
+            in_I16_i2  = eins2[9:24];
+            rt_addr_i2 = eins2[25:31];
+            case(eoc2_9b)
+                9'b010000011:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = IMMEDIATE_LOAD_HALFWORD;
+                    end
+                9'b010000001:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = IMMEDIATE_LOAD_WORD;
+                    end
+                9'b001100001:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = LOAD_QUADWORD_AFORM;
+                    end
+                9'b001000001:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = STORE_QUADWORD_AFORM;
+                    end
+                9'b001100110:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = BRANCH_RELATIVE_AND_SET_LINK;
+                    end
+                9'b001100010:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = BRANCH_ABSOLUTE_AND_SET_LINK;
+                    end
+                9'b001100100:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = BRANCH_RELATIVE;
+                    end
+                9'b001100000:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = BRANCH_ABSOLUTE;
+                    end
+                9'b001000010:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = BRANCH_IF_NOT_ZERO_WORD;
+                    end
+                9'b001000000:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = BRANCH_IF_ZERO_WORD;
+                    end
+                9'b001000110:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = BRANCH_IF_NOT_ZERO_HALFWORD;
+                    end
+                9'b001000100:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = BRANCH_IF_ZERO_HALFWORD;
+                    end
+            endcase
+        end
+        else begin
+            rt_addr_i2 = eins2[25:31];
+            ra_addr_i2 = eins2[18:24];
+            rb_addr_i2 = eins2[11:17];
+            case(eoc2_11b) 
+                11'b00011001000: 
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = ADD_HALF_WORD;
+                    end
+                11'b00011000000: 
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = ADD_WORD;
+                    end
+                11'b00001001000:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = SUBTRACT_FROM_HALFWORD;
+                    end
+                11'b00001000000: 
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = SUBTRACT_FROM_WORD;
+                    end
+                11'b01101000000: 
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = ADD_EXTENDED;
+                    end
+                11'b01101000001:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = SUBTRACT_FROM_EXTENDED;
+                    end
+                11'b00011000010: 
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = CARRY_GENERATE;
+                    end
+                11'b00001000010: 
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = BORROW_GENERATE;
+                    end
+                11'b01010100101:
+                    begin
+                        ins2_type  = EVEN;
+                        opcode_i2  = COUNT_LEADING_ZEROS;
+                        rb_addr_i2 = 'dx;
+                    end
+                11'b00011000001: 
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = AND;
+                    end
+                11'b00001000001: 
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = OR;
+                    end
+                11'b01001000001:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = EXCLUSIVE_OR;
+                    end
+                11'b00011001001: 
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = NAND;
+                    end
+                11'b00001001001: 
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = NOR;
+                    end
+                11'b01001001001:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = EQUIVALENT;
+                    end
+                11'b01111000000:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = COMPARE_EQUAL_WORD;
+                    end
+                11'b01111001000:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = COMPARE_EQUAL_HALFWORD;
+                    end
+                11'b01001000000:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = COMPARE_GREATER_THAN_WORD;
+                    end
+                11'b01001001000:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = COMPARE_GREATER_THAN_HALFWORD;
+                    end
+                11'b00001011111:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = SHIFT_LEFT_HALFWORD;
+                    end
+                11'b00001111111:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = SHIFT_LEFT_HALFWORD_IMMEDIATE;
+                        in_I7_i2  = eins2[11:17];
+                        rb_addr_i2 = 'dx;
+                    end
+                11'b00001011011:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = SHIFT_LEFT_WORD;
+                    end
+                11'b00001111011:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = SHIFT_LEFT_WORD_IMMEDIATE;
+                        in_I7_i2  = eins2[11:17];
+                        rb_addr_i2 = 'dx;
+                    end
+                11'b00111011011:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = SHIFT_LEFT_QUADWORD_BY_BITS;
+                    end
+                11'b00111111011:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = SHIFT_LEFT_QUADWORD_BY_BITS_IMMEDIATE;
+                        in_I7_i2  = eins2[11:17];
+                        rb_addr_i2 = 'dx;
+                    end
+                11'b00111011111:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = SHIFT_LEFT_QUADWORD_BY_BYTES;
+                    end
+                11'b00111111111:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = SHIFT_LEFT_QUADWORD_BY_BYTES_IMMEDIATE;
+                        in_I7_i2  = eins2[11:17];
+                        rb_addr_i2 = 'dx;
+                    end
+                11'b00001011000:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = ROTATE_WORD;
+                    end
+                11'b00001111100:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = ROTATE_WORD_IMMEDIATE;
+                        in_I7_i2  = eins2[11:17];
+                        rb_addr_i2 = 'dx;
+                    end
+                11'b00111011000:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = ROTATE_QUADWORD_BY_BITS;
+                    end
+                11'b00111111000:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = ROTATE_QUADWORD_BY_BITS_IMMEDIATE;
+                        in_I7_i2  = eins2[11:17];
+                        rb_addr_i2 = 'dx;
+                    end
+                11'b00111011100:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = ROTATE_QUADWORD_BY_BYTES;
+                    end
+                11'b00111111100:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = ROTATE_QUADWORD_BY_BYTES_IMMEDIATE;
+                        in_I7_i2  = eins2[11:17];
+                        rb_addr_i2 = 'dx;
+                    end
+                11'b00110101000:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = BRANCH_INDIRECT;
+                        ra_addr_i2 = eins2[18:24];
+                        rb_addr_i2 = 'dx;
+                        rt_addr_i2 = 'dx;
+                    end
+                11'b01011000100:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = FLOATING_ADD;
+                    end
+                11'b01011000101:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = FLOATING_SUBTRACT;
+                    end
+                11'b01011000110:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = FLOATING_MULTIPLY;
+                    end
+                11'b01111000010:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = FLOATING_COMPARE_EQUAL;
+                    end
+                11'b01111001010:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = FLOATING_COMPARE_MAGNITUDE_EQUAL;
+                    end
+                11'b01011000010:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = FLOATING_COMPARE_GREATER_THAN;
+                    end
+                11'b01011001010:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = FLOATING_COMPARE_MAGNITUDE_GREATER_THAN;
+                    end
+                11'b01111000100:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = MULTIPLY;
+                    end
+                11'b00000000000:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = STOP;
+                    end
+                11'b01010110100:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = COUNT_ONES_IN_BYTES;
+                    end
+                11'b00011010011:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = AVERAGE_BYTES;
+                    end
+                11'b00001010011:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = ABSOLUTE_DIFFERENCE_OF_BYTES;
+                    end
+                11'b01001010011:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = SUM_BYTES_INTO_HALFWORDS;
                     end
             endcase
         end
