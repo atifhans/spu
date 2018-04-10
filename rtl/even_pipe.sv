@@ -596,11 +596,10 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
                     for(int i=0; i < 4; i++) begin
                         RT_reg[i*WORD +: WORD] = (in_RA[((i*WORD)+HALFWORD) +: WORD] * in_RB[((i*WORD)+HALFWORD) +: WORD]) + in_RC[i*WORD +: WORD];
                     end
-                    unit_idx = 3'd3;
+                    unit_idx = 3'd7;
                     rt_wr_en = 1;
                 end
 
-            //TODO: Revisit to add clipping of output between Smax and Smin
             FLOATING_ADD:
                 begin
                     for(int i=0; i < 4; i++) begin
