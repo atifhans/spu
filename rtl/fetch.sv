@@ -31,7 +31,6 @@ module fetch
     logic [0:63]         cache[32];
     logic [0:31]         pc;
     logic [0:7]          blk_tag[2];
-    logic [0:3]          blk_offset[2];
     logic                blk_valid[2];
 
     logic [0:7]          tag;
@@ -52,7 +51,7 @@ module fetch
             if(cw_pending && chit) begin
                 cw_pending <= 'd0;
             end
-            else if(cmiss) begin
+            else if(cmiss && !dep_stall) begin
                 cw_pending <= 'd1;
             end
         end
@@ -87,7 +86,7 @@ module fetch
     always_ff @(posedge clk) begin
         if(rst) begin
             cache <= '{default:'0};
-            blk_tag <= '{default:'0};
+            blk_tag <= '{default:'dx};
             blk_valid <= '{default:'0};
             last_used <= 'd0;
         end
@@ -103,7 +102,7 @@ module fetch
                 blk_tag[1] <= tag;
                 blk_valid[1] <= 1;
                 for(int i = 0; i < 16; i++) begin
-                    cache[i+16] <= cache_line[(i+16)*64 +: 64];
+                    cache[i+16] <= cache_line[i*64 +: 64];
                 end
             end
             else if(last_used) begin
@@ -119,18 +118,18 @@ module fetch
                 blk_valid[1] <= 1;
                 last_used <= ~last_used;
                 for(int i = 0; i < 16; i++) begin
-                    cache[i+16] <= cache_line[(i+16)*64 +: 64];
+                    cache[i+16] <= cache_line[i*64 +: 64];
                 end
             end
         end
     end
 
     always_comb begin
-        tag = pc[19:25];
-        offset = pc[26:31] >> 3;
+        tag = pc[19:24];
+        offset = pc[25:31] >> 3;
         pc_out = pc;
-        chit1 = (tag == blk_tag[0] && blk_valid[0]);
-        chit2 = (tag == blk_tag[1] && blk_valid[1]); 
+        chit1 = (tag === blk_tag[0] && blk_valid[0]);
+        chit2 = (tag === blk_tag[1] && blk_valid[1]); 
         chit  = chit1 || chit2;
         cmiss = ~chit;
         if(chit1) begin

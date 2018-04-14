@@ -39,7 +39,7 @@ module local_store #(parameter MEM_SIZE = LS_SIZE)
         end
 
         if(cache_wr) begin
-            for(int i = 0; i < 128; i++) begin
+            for(int i = 0; i < 256; i++) begin
                 cache_out[i*8 +: 8] = ls_mem[ls_addr + i];
             end
         end

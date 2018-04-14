@@ -90,8 +90,8 @@ module decode
     assign eoc2_8b  = eins2[0:7];
     assign eoc1_9b  = eins1[0:8];
     assign eoc2_9b  = eins2[0:8];
-    assign eoc1_10b = eins1[0:9];
-    assign eoc2_10b = eins2[0:9];
+    assign eoc1_11b = eins1[0:10];
+    assign eoc2_11b = eins2[0:10];
 
     always_ff @(posedge clk) begin
         if(rst) begin
@@ -723,6 +723,9 @@ module decode
                     begin
                         ins1_type = EVEN;
                         opcode_i1 = STOP;
+                        ra_addr_i1 = 'dx;
+                        rb_addr_i1 = 'dx;
+                        rt_addr_i1 = 'dx;
                     end
                 11'b01010110100:
                     begin
@@ -1249,7 +1252,10 @@ module decode
 
             dec_stall = 1;
         end
-        else if((rt_addr_i1 == rt_addr_i2) && rt_addr_i1 !== 7'dx && rt_addr_i2 !== 7'dx) begin
+        else if((rt_addr_i1 == rt_addr_i2) && rt_addr_i1 !== 7'dx && rt_addr_i2 !== 7'dx
+                 //opcode_i1 != STORE_QUADWORD_AFORM && opcode_i1 != STORE_QUADWORD_DFORM &&
+                 //opcode_i2 != STORE_QUADWORD_AFORM && opcode_i2 != STORE_QUADWORD_DFORM
+               ) begin
             dec_stall = 1;
         end
         else begin

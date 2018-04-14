@@ -93,16 +93,18 @@ module dependency
     logic is_lat6;
 
     assign is_lat1 = rf_idx_s1_ep == 3'd1 || rf_idx_s1_ep == 3'd2 || rf_idx_s1_ep == 3'd3 || 
-                     rf_idx_s1_ep == 3'd4 || rf_idx_s1_op == 3'd5 || rf_idx_s1_op == 3'd6;
+                     rf_idx_s1_ep == 3'd4 || rf_idx_s1_op == 3'd5 || rf_idx_s1_op == 3'd6 || 
+                     rf_idx_s1_ep == 3'd7;
 
     assign is_lat2 = rf_idx_s2_ep == 3'd2 || rf_idx_s2_ep == 3'd3 || rf_idx_s2_ep == 3'd4 ||
-                     rf_idx_s2_op == 3'd5 || rf_idx_s2_op == 3'd6;
+                     rf_idx_s2_op == 3'd5 || rf_idx_s2_op == 3'd6 || rf_idx_s2_ep == 3'd7;
 
-    assign is_lat3 = rf_idx_s3_ep == 3'd3 || rf_idx_s3_op == 3'd5 || rf_idx_s3_op == 3'd6;
+    assign is_lat3 = rf_idx_s3_ep == 3'd3 || rf_idx_s3_op == 3'd5 || rf_idx_s3_op == 3'd6 || 
+                     rf_idx_s3_ep == 3'd7;
 
-    assign is_lat4 = rf_idx_s4_ep == 3'd3 || rf_idx_s4_op == 3'd6;
+    assign is_lat4 = rf_idx_s4_ep == 3'd3 || rf_idx_s4_op == 3'd6 || rf_idx_s4_ep == 3'd7;
 
-    assign is_lat5 = rf_idx_s5_ep == 3'd3 || rf_idx_s5_op == 3'd6;
+    assign is_lat5 = rf_idx_s5_ep == 3'd3 || rf_idx_s5_op == 3'd6 || rf_idx_s5_ep == 3'd7;
 
     assign is_lat6 = rf_idx_s6_ep == 3'd7; 
 
@@ -181,38 +183,48 @@ module dependency
         dep_stall = 1'b0;
 
         if(
-           ((rf_addr_s1_ep == ra_addr_ep || rf_addr_s1_ep == ra_addr_op) && is_lat1) ||
-           ((rf_addr_s2_ep == ra_addr_ep || rf_addr_s2_ep == ra_addr_op) && is_lat2) ||
-           ((rf_addr_s3_ep == ra_addr_ep || rf_addr_s3_ep == ra_addr_op) && is_lat3) ||
-           ((rf_addr_s4_ep == ra_addr_ep || rf_addr_s4_ep == ra_addr_op) && is_lat4) ||
-           ((rf_addr_s5_ep == ra_addr_ep || rf_addr_s5_ep == ra_addr_op) && is_lat5) ||
-           ((rf_addr_s6_ep == ra_addr_ep || rf_addr_s6_ep == ra_addr_op) && is_lat6) ||
-           ((rf_addr_s1_ep == rb_addr_ep || rf_addr_s1_ep == rb_addr_op) && is_lat1) ||
-           ((rf_addr_s2_ep == rb_addr_ep || rf_addr_s2_ep == rb_addr_op) && is_lat2) ||
-           ((rf_addr_s3_ep == rb_addr_ep || rf_addr_s3_ep == rb_addr_op) && is_lat3) ||
-           ((rf_addr_s4_ep == rb_addr_ep || rf_addr_s4_ep == rb_addr_op) && is_lat4) ||
-           ((rf_addr_s5_ep == rb_addr_ep || rf_addr_s5_ep == rb_addr_op) && is_lat5) ||
-           ((rf_addr_s6_ep == rb_addr_ep || rf_addr_s6_ep == rb_addr_op) && is_lat6) ||
-
-           ((rf_addr_s1_ep == rc_addr_ep || rf_addr_s1_ep == rc_addr_op) && is_lat1) ||
-           ((rf_addr_s2_ep == rc_addr_ep || rf_addr_s2_ep == rc_addr_op) && is_lat2) ||
-           ((rf_addr_s3_ep == rc_addr_ep || rf_addr_s3_ep == rc_addr_op) && is_lat3) ||
-           ((rf_addr_s4_ep == rc_addr_ep || rf_addr_s4_ep == rc_addr_op) && is_lat4) ||
-           ((rf_addr_s5_ep == rc_addr_ep || rf_addr_s5_ep == rc_addr_op) && is_lat5) ||
-           ((rf_addr_s6_ep == rc_addr_ep || rf_addr_s6_ep == rc_addr_op) && is_lat6) ||
-           
-           ((rf_addr_s1_op == ra_addr_op || rf_addr_s1_op == ra_addr_ep) && is_lat1) ||
-           ((rf_addr_s2_op == ra_addr_op || rf_addr_s2_op == ra_addr_ep) && is_lat2) ||
-           ((rf_addr_s3_op == ra_addr_op || rf_addr_s3_op == ra_addr_ep) && is_lat3) ||
-           ((rf_addr_s4_op == ra_addr_op || rf_addr_s4_op == ra_addr_ep) && is_lat4) ||
-           ((rf_addr_s5_op == ra_addr_op || rf_addr_s5_op == ra_addr_ep) && is_lat5) ||
-           ((rf_addr_s6_op == ra_addr_op || rf_addr_s6_op == ra_addr_ep) && is_lat6) ||
-           ((rf_addr_s1_op == rb_addr_op || rf_addr_s1_op == rb_addr_ep) && is_lat1) ||
-           ((rf_addr_s2_op == rb_addr_op || rf_addr_s2_op == rb_addr_ep) && is_lat2) ||
-           ((rf_addr_s3_op == rb_addr_op || rf_addr_s3_op == rb_addr_ep) && is_lat3) ||
-           ((rf_addr_s4_op == rb_addr_op || rf_addr_s4_op == rb_addr_ep) && is_lat4) ||
-           ((rf_addr_s5_op == rb_addr_op || rf_addr_s5_op == rb_addr_ep) && is_lat5) ||
-           ((rf_addr_s6_op == rb_addr_op || rf_addr_s6_op == rb_addr_ep) && is_lat6)
+           (rt_addr_ep == dec_ra_addr_ep || rt_addr_ep == dec_ra_addr_op) ||
+           (rt_addr_ep == dec_rb_addr_ep || rt_addr_ep == dec_rb_addr_op) ||
+           (rt_addr_ep == dec_rc_addr_ep || rt_addr_ep == dec_rc_addr_op) ||
+           (rt_addr_op == dec_ra_addr_ep || rt_addr_op == dec_ra_addr_op) ||
+           (rt_addr_op == dec_rb_addr_ep || rt_addr_op == dec_rb_addr_op) ||
+           (rt_addr_op == dec_rc_addr_ep || rt_addr_op == dec_rc_addr_op) ||
+           ((rf_addr_s1_ep == dec_ra_addr_ep || rf_addr_s1_ep == dec_ra_addr_op) && is_lat1) ||
+           ((rf_addr_s2_ep == dec_ra_addr_ep || rf_addr_s2_ep == dec_ra_addr_op) && is_lat2) ||
+           ((rf_addr_s3_ep == dec_ra_addr_ep || rf_addr_s3_ep == dec_ra_addr_op) && is_lat3) ||
+           ((rf_addr_s4_ep == dec_ra_addr_ep || rf_addr_s4_ep == dec_ra_addr_op) && is_lat4) ||
+           ((rf_addr_s5_ep == dec_ra_addr_ep || rf_addr_s5_ep == dec_ra_addr_op) && is_lat5) ||
+           ((rf_addr_s6_ep == dec_ra_addr_ep || rf_addr_s6_ep == dec_ra_addr_op) && is_lat6) ||
+           ((rf_addr_s1_ep == dec_rb_addr_ep || rf_addr_s1_ep == dec_rb_addr_op) && is_lat1) ||
+           ((rf_addr_s2_ep == dec_rb_addr_ep || rf_addr_s2_ep == dec_rb_addr_op) && is_lat2) ||
+           ((rf_addr_s3_ep == dec_rb_addr_ep || rf_addr_s3_ep == dec_rb_addr_op) && is_lat3) ||
+           ((rf_addr_s4_ep == dec_rb_addr_ep || rf_addr_s4_ep == dec_rb_addr_op) && is_lat4) ||
+           ((rf_addr_s5_ep == dec_rb_addr_ep || rf_addr_s5_ep == dec_rb_addr_op) && is_lat5) ||
+           ((rf_addr_s6_ep == dec_rb_addr_ep || rf_addr_s6_ep == dec_rb_addr_op) && is_lat6) ||
+           ((rf_addr_s1_ep == dec_rc_addr_ep || rf_addr_s1_ep == dec_rc_addr_op) && is_lat1) ||
+           ((rf_addr_s2_ep == dec_rc_addr_ep || rf_addr_s2_ep == dec_rc_addr_op) && is_lat2) ||
+           ((rf_addr_s3_ep == dec_rc_addr_ep || rf_addr_s3_ep == dec_rc_addr_op) && is_lat3) ||
+           ((rf_addr_s4_ep == dec_rc_addr_ep || rf_addr_s4_ep == dec_rc_addr_op) && is_lat4) ||
+           ((rf_addr_s5_ep == dec_rc_addr_ep || rf_addr_s5_ep == dec_rc_addr_op) && is_lat5) ||
+           ((rf_addr_s6_ep == dec_rc_addr_ep || rf_addr_s6_ep == dec_rc_addr_op) && is_lat6) ||
+           ((rf_addr_s1_op == dec_ra_addr_op || rf_addr_s1_op == dec_ra_addr_ep) && is_lat1) ||
+           ((rf_addr_s2_op == dec_ra_addr_op || rf_addr_s2_op == dec_ra_addr_ep) && is_lat2) ||
+           ((rf_addr_s3_op == dec_ra_addr_op || rf_addr_s3_op == dec_ra_addr_ep) && is_lat3) ||
+           ((rf_addr_s4_op == dec_ra_addr_op || rf_addr_s4_op == dec_ra_addr_ep) && is_lat4) ||
+           ((rf_addr_s5_op == dec_ra_addr_op || rf_addr_s5_op == dec_ra_addr_ep) && is_lat5) ||
+           ((rf_addr_s6_op == dec_ra_addr_op || rf_addr_s6_op == dec_ra_addr_ep) && is_lat6) ||
+           ((rf_addr_s1_op == dec_rb_addr_op || rf_addr_s1_op == dec_rb_addr_ep) && is_lat1) ||
+           ((rf_addr_s2_op == dec_rb_addr_op || rf_addr_s2_op == dec_rb_addr_ep) && is_lat2) ||
+           ((rf_addr_s3_op == dec_rb_addr_op || rf_addr_s3_op == dec_rb_addr_ep) && is_lat3) ||
+           ((rf_addr_s4_op == dec_rb_addr_op || rf_addr_s4_op == dec_rb_addr_ep) && is_lat4) ||
+           ((rf_addr_s5_op == dec_rb_addr_op || rf_addr_s5_op == dec_rb_addr_ep) && is_lat5) ||
+           ((rf_addr_s6_op == dec_rb_addr_op || rf_addr_s6_op == dec_rb_addr_ep) && is_lat6) ||
+           ((rf_addr_s1_op == dec_rc_addr_ep || rf_addr_s1_op == dec_rc_addr_op) && is_lat1) ||
+           ((rf_addr_s2_op == dec_rc_addr_ep || rf_addr_s2_op == dec_rc_addr_op) && is_lat2) ||
+           ((rf_addr_s3_op == dec_rc_addr_ep || rf_addr_s3_op == dec_rc_addr_op) && is_lat3) ||
+           ((rf_addr_s4_op == dec_rc_addr_ep || rf_addr_s4_op == dec_rc_addr_op) && is_lat4) ||
+           ((rf_addr_s5_op == dec_rc_addr_ep || rf_addr_s5_op == dec_rc_addr_op) && is_lat5) ||
+           ((rf_addr_s6_op == dec_rc_addr_ep || rf_addr_s6_op == dec_rc_addr_op) && is_lat6)
           ) 
         begin
             dep_stall = 1'b1;

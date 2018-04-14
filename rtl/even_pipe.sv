@@ -576,7 +576,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             MULTIPLY:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        RT_reg[i*WORD +: WORD] = in_RA[((i*WORD)+HALFWORD) +: WORD] * in_RB[((i*WORD)+HALFWORD) +: WORD];
+                        RT_reg[i*WORD +: WORD] = in_RA[((i*WORD)+HALFWORD) +: HALFWORD] * in_RB[((i*WORD)+HALFWORD) +: HALFWORD];
                     end
                     unit_idx = 3'd3;
                     rt_wr_en = 1;
@@ -585,7 +585,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             MULTIPLY_IMMEDIATE:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        RT_reg[i*WORD +: WORD] = in_RA[((i*WORD)+HALFWORD) +: WORD] * rep_lb16_I10;
+                        RT_reg[i*WORD +: WORD] = in_RA[((i*WORD)+HALFWORD) +: HALFWORD] * rep_lb16_I10;
                     end
                     unit_idx = 3'd3;
                     rt_wr_en = 1;
@@ -594,7 +594,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
             MULTIPLY_AND_ADD:
                 begin
                     for(int i=0; i < 4; i++) begin
-                        RT_reg[i*WORD +: WORD] = (in_RA[((i*WORD)+HALFWORD) +: WORD] * in_RB[((i*WORD)+HALFWORD) +: WORD]) + in_RC[i*WORD +: WORD];
+                        RT_reg[i*WORD +: WORD] = (in_RA[((i*WORD)+HALFWORD) +: HALFWORD] * in_RB[((i*WORD)+HALFWORD) +: HALFWORD]) + in_RC[i*WORD +: WORD];
                     end
                     unit_idx = 3'd7;
                     rt_wr_en = 1;

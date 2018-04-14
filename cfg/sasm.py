@@ -54,6 +54,9 @@ with open(fname) as f:
         mcode = ""
         opcode = words[0]
 
+        if(opcode[0] == '/' and opcode[1] == '/'):
+            continue
+
         if(mode == 1):
             syms = words[1].split(',')
             mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(11))
@@ -65,8 +68,40 @@ with open(fname) as f:
         else:
             #TODO: Have to write special cases for some instructions...
             itype = ins_type[opcode]
-            if(itype == "1" or itype == "3"): #RR or RI17
+            syms = ""
+            if(len(words) > 1):
                 syms = words[1].split(',')
+            if(len(syms) > 0):
+                if(syms[0][0] == '$'):
+                    syms[0] = syms[0][1:]
+                if(syms[0] == "$lr"):
+                    syms[0] = '0'
+                if(syms[0] == "$sp"):
+                    syms[0] = '1'
+            if(len(syms) > 1):
+                if(syms[1][0] == '$'):
+                    syms[1] = syms[1][1:]
+                if(syms[1] == "$lr"):
+                    syms[1] = '0'
+                if(syms[1] == "$sp"):
+                    syms[1] = '1'
+            if(len(syms) > 2):
+                if(syms[2][0] == '$'):
+                    syms[2] = syms[2][1:]
+                if(syms[2] == "$lr"):
+                    syms[2] = '0'
+                if(syms[2] == "$sp"):
+                    syms[2] = '1'
+            if(len(syms) > 3):
+                if(syms[3][0] == '$'):
+                    syms[3] = syms[3][1:]
+                if(syms[3] == "$lr"):
+                    syms[3] = '0'
+                if(syms[3] == "$sp"):
+                    syms[3] = '1'
+                    
+            if(itype == "1" or itype == "3"): #RR or RI17
+                #syms = words[1].split(',')
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(11))
                 if(opcode == "bi"): 
                     mcode += str(bin(int("0"))[2:].zfill(7))
@@ -77,20 +112,17 @@ with open(fname) as f:
                     mcode += str(bin(int(syms[1]))[2:].zfill(7))
                     mcode += str(bin(int(syms[2]))[2:].zfill(7))
             elif(itype == "2"): #RRR
-                syms = words[1].split(',')
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(4))
                 mcode += str(bin(int(syms[0]))[2:].zfill(7))
                 mcode += str(bin(int(syms[1]))[2:].zfill(7))
                 mcode += str(bin(int(syms[2]))[2:].zfill(7))
                 mcode += str(bin(int(syms[3]))[2:].zfill(7))
             elif(itype == "4"): #RI10
-                syms = words[1].split(',')
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(8))
                 mcode += str(bin(int(syms[0]))[2:].zfill(10))
                 mcode += str(bin(int(syms[1]))[2:].zfill(7))
                 mcode += str(bin(int(syms[2]))[2:].zfill(7))
             elif(itype == "5"): #RI16
-                syms = words[1].split(',')
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(9))
                 if(opcode == "br" or opcode == "bra"):
                     mcode += str(bin(int(syms[0]))[2:].zfill(16))
@@ -99,7 +131,6 @@ with open(fname) as f:
                     mcode += str(bin(int(syms[0]))[2:].zfill(16))
                     mcode += str(bin(int(syms[1]))[2:].zfill(7))
             elif(itype == "6"): #RI18
-                syms = words[1].split(',')
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(7))
                 mcode += str(bin(int(syms[0]))[2:].zfill(18))
                 mcode += str(bin(int(syms[1]))[2:].zfill(7))
