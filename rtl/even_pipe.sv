@@ -31,12 +31,14 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
     input  logic [0:17]              in_I18,
     input  logic                     flush,
     input  logic [0:6]               in_RT_addr,
+    output logic [0:6]               rf_addr_s1_ep,
     output logic [0:6]               rf_addr_s2_ep,
     output logic [0:6]               rf_addr_s3_ep,
     output logic [0:6]               rf_addr_s4_ep,
     output logic [0:6]               rf_addr_s5_ep,
     output logic [0:6]               rf_addr_s6_ep,
     output logic [0:6]               rf_addr_s7_ep,
+    output logic [0:2]               rf_idx_s1_ep,
     output logic [0:2]               rf_idx_s2_ep,
     output logic [0:2]               rf_idx_s3_ep,
     output logic [0:2]               rf_idx_s4_ep,
@@ -54,9 +56,7 @@ module even_pipe #(parameter OPCODE_LEN  = 11,
 );
 
     logic            rt_wr_en;
-    logic [0:6]      rf_addr_s1_ep;
     logic [0:127]    rf_data_s1_ep;
-    logic [0:2]      rf_idx_s1_ep;
     logic            rf_s1_we;
     logic            rf_s2_we;
     logic            rf_s3_we;

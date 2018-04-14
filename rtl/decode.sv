@@ -19,6 +19,7 @@ module decode
     input  logic             rst,
     input  logic [0:31]      eins1,
     input  logic [0:31]      eins2,
+    input  logic             dep_stall,
     output logic             dec_stall,
     output Opcodes           opcode_ep,
     output Opcodes           opcode_op,
@@ -117,7 +118,30 @@ module decode
             in_I18o <= 'dx;
         end
         else begin
-            if(dec_stall || stall_done) begin
+            if(dep_stall) begin
+                stall_done <= stall_done;
+                opcode_ep <= opcode_ep;
+                opcode_op <= opcode_op;
+                ra_addr_ep <= ra_addr_ep;
+                rb_addr_ep <= rb_addr_ep;
+                rc_addr_ep <= rc_addr_ep;
+                rt_addr_ep <= rt_addr_ep;
+                ra_addr_op <= ra_addr_op;
+                rb_addr_op <= rb_addr_op;
+                rc_addr_op <= rc_addr_op;
+                rt_addr_op <= rt_addr_op;
+                in_I7e <= in_I7e;
+                in_I8e <= in_I8e;
+                in_I10e <= in_I10e;
+                in_I16e <= in_I16e;
+                in_I18e <= in_I18e;
+                in_I7o <= in_I7o;
+                in_I8o <= in_I8o;
+                in_I10o <= in_I10o;
+                in_I16o <= in_I16o;
+                in_I18o <= in_I18o;
+            end
+            else if(dec_stall || stall_done) begin
                 if(stall_done) begin
                     if(ins2_type == EVEN) begin
                         opcode_ep  <= opcode_i2;
@@ -130,6 +154,7 @@ module decode
                         in_I10e    <= in_I10_i2;
                         in_I16e    <= in_I16_i2;
                         in_I18e    <= in_I18_i2;
+                        opcode_op  <= NOP;
                     end
                     else begin
                         opcode_op  <= opcode_i2;
@@ -142,8 +167,9 @@ module decode
                         in_I10o    <= in_I10_i2;
                         in_I16o    <= in_I16_i2;
                         in_I18o    <= in_I18_i2;
+                        opcode_ep  <= LNOP;
                     end
-                    stall_done <= 'd0;
+                    stall_done <= (dep_stall == 1) ? 1'b1 : 1'b0;
                 end
                 else begin
                     if(ins1_type == EVEN) begin
@@ -157,6 +183,7 @@ module decode
                         in_I10e    <= in_I10_i1;
                         in_I16e    <= in_I16_i1;
                         in_I18e    <= in_I18_i1;
+                        opcode_op  <= NOP;
                     end
                     else begin
                         opcode_op  <= opcode_i1;
@@ -169,8 +196,9 @@ module decode
                         in_I10o    <= in_I10_i1;
                         in_I16o    <= in_I16_i1;
                         in_I18o    <= in_I18_i1;
+                        opcode_ep  <= LNOP;
                     end
-                    stall_done <= 'd1;
+                    stall_done <= (dep_stall == 1) ? 1'b0 : 1'b1;
                 end
             end
             else begin
@@ -716,6 +744,16 @@ module decode
                         ins1_type = EVEN;
                         opcode_i1 = SUM_BYTES_INTO_HALFWORDS;
                     end
+                11'b00000000001:
+                    begin
+                        ins1_type = EVEN;
+                        opcode_i1 = LNOP;
+                    end
+                11'b01000000001:
+                    begin
+                        ins1_type = ODD;
+                        opcode_i1 = NOP;
+                    end
             endcase
         end
 
@@ -1188,6 +1226,16 @@ module decode
                     begin
                         ins2_type = EVEN;
                         opcode_i2 = SUM_BYTES_INTO_HALFWORDS;
+                    end
+                11'b00000000001:
+                    begin
+                        ins2_type = EVEN;
+                        opcode_i2 = LNOP;
+                    end
+                11'b01000000001:
+                    begin
+                        ins2_type = ODD;
+                        opcode_i2 = NOP;
                     end
             endcase
         end

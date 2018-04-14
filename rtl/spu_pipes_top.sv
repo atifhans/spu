@@ -38,6 +38,31 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
     input  logic [0:9]               in_I10o,
     input  logic [0:15]              in_I16o,
     input  logic [0:17]              in_I18o,
+    output logic [0:6]               rf_addr_s1_ep,
+    output logic [0:6]               rf_addr_s2_ep,
+    output logic [0:6]               rf_addr_s3_ep,
+    output logic [0:6]               rf_addr_s4_ep,
+    output logic [0:6]               rf_addr_s5_ep,
+    output logic [0:6]               rf_addr_s6_ep,
+    output logic [0:6]               rf_addr_s1_op,
+    output logic [0:6]               rf_addr_s2_op,
+    output logic [0:6]               rf_addr_s3_op,
+    output logic [0:6]               rf_addr_s4_op,
+    output logic [0:6]               rf_addr_s5_op,
+    output logic [0:6]               rf_addr_s6_op,
+    output logic [0:2]               rf_idx_s1_ep,
+    output logic [0:2]               rf_idx_s2_ep,
+    output logic [0:2]               rf_idx_s3_ep,
+    output logic [0:2]               rf_idx_s4_ep,
+    output logic [0:2]               rf_idx_s5_ep,
+    output logic [0:2]               rf_idx_s6_ep,
+    output logic [0:2]               rf_idx_s1_op,
+    output logic [0:2]               rf_idx_s2_op,
+    output logic [0:2]               rf_idx_s3_op,
+    output logic [0:2]               rf_idx_s4_op,
+    output logic [0:2]               rf_idx_s5_op,
+    output logic [0:2]               rf_idx_s6_op,
+    output logic                     flush,
     input  logic [0:31]              PC_in,
     input  logic [0:127]             ls_data_rd,
     output logic [0:127]             ls_data_wr,
@@ -57,17 +82,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
     logic [0:127]          ra_rd_op;
     logic [0:127]          rb_rd_op;
     logic [0:127]          rc_rd_op;
-    logic [0:6]            rf_addr_s2_ep;
-    logic [0:6]            rf_addr_s3_ep;
-    logic [0:6]            rf_addr_s4_ep;
-    logic [0:6]            rf_addr_s5_ep;
-    logic [0:6]            rf_addr_s6_ep;
     logic [0:6]            rf_addr_s7_ep;
-    logic [0:6]            rf_addr_s2_op;
-    logic [0:6]            rf_addr_s3_op;
-    logic [0:6]            rf_addr_s4_op;
-    logic [0:6]            rf_addr_s5_op;
-    logic [0:6]            rf_addr_s6_op;
     logic [0:6]            rf_addr_s7_op;
     logic [0:127]          rf_data_s2_ep;
     logic [0:127]          rf_data_s3_ep;
@@ -89,19 +104,8 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
     logic [0:127]          rc_fw_op;
     logic [0:6]            rt_fw_addr_ep;
     logic [0:6]            rt_fw_addr_op;
-    logic [0:2]            rf_idx_s2_ep;
-    logic [0:2]            rf_idx_s3_ep;
-    logic [0:2]            rf_idx_s4_ep;
-    logic [0:2]            rf_idx_s5_ep;
-    logic [0:2]            rf_idx_s6_ep;
     logic [0:2]            rf_idx_s7_ep;
-    logic [0:2]            rf_idx_s2_op;
-    logic [0:2]            rf_idx_s3_op;
-    logic [0:2]            rf_idx_s4_op;
-    logic [0:2]            rf_idx_s5_op;
-    logic [0:2]            rf_idx_s6_op;
     logic [0:2]            rf_idx_s7_op;
-    logic                  flush;
 
     reg_file u_reg_file (
         .clk          ( clk         ),
@@ -206,6 +210,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .in_I18        (in_I18e),
         .in_RT_addr    (rt_addr_ep),
         .flush         ( flush  ),
+        .rf_addr_s1_ep ( rf_addr_s1_ep ),
         .rf_addr_s2_ep ( rf_addr_s2_ep ),
         .rf_addr_s3_ep ( rf_addr_s3_ep ),
         .rf_addr_s4_ep ( rf_addr_s4_ep ),
@@ -218,6 +223,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .rf_data_s5_ep ( rf_data_s5_ep ),
         .rf_data_s6_ep ( rf_data_s6_ep ),
         .rf_data_s7_ep ( rf_data_s7_ep ),
+        .rf_idx_s1_ep  ( rf_idx_s1_ep  ),
         .rf_idx_s2_ep  ( rf_idx_s2_ep  ),
         .rf_idx_s3_ep  ( rf_idx_s3_ep  ),
         .rf_idx_s4_ep  ( rf_idx_s4_ep  ),
@@ -243,6 +249,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .in_I18        (in_I18o),
         .flush         ( flush  ),
         .in_RT_addr    (rt_addr_op),
+        .rf_addr_s1_op ( rf_addr_s1_op ),
         .rf_addr_s2_op ( rf_addr_s2_op ),
         .rf_addr_s3_op ( rf_addr_s3_op ),
         .rf_addr_s4_op ( rf_addr_s4_op ),
@@ -255,6 +262,7 @@ module spu_pipes_top #(parameter OPCODE_LEN  = 11,
         .rf_data_s5_op ( rf_data_s5_op ),
         .rf_data_s6_op ( rf_data_s6_op ),
         .rf_data_s7_op ( rf_data_s7_op ),
+        .rf_idx_s1_op  ( rf_idx_s1_op  ),
         .rf_idx_s2_op  ( rf_idx_s2_op  ),
         .rf_idx_s3_op  ( rf_idx_s3_op  ),
         .rf_idx_s4_op  ( rf_idx_s4_op  ),

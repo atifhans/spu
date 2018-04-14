@@ -21,6 +21,7 @@ module fetch
     input  logic             cache_wr,
     input  logic             branch_taken,
     input  logic             dec_stall,
+    input  logic             dep_stall,
     input  logic  [0:31]     pc_in,
     output logic  [0:31]     pc_out,
     output logic  [0:31]     eins1,
@@ -40,7 +41,22 @@ module fetch
     logic                chit2;
     logic                chit;
     logic                cmiss;
+    logic                cw_pending;
     logic                cache_wr_dly;
+
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            cw_pending <= 'd0;
+        end
+        else begin
+            if(cw_pending && chit) begin
+                cw_pending <= 'd0;
+            end
+            else if(cmiss) begin
+                cw_pending <= 'd1;
+            end
+        end
+    end
 
     always_ff @(posedge clk) begin
         if(rst) begin
@@ -56,7 +72,7 @@ module fetch
             pc <= 'd0;
         end
         else begin
-            if(dec_stall) begin
+            if(dec_stall || dep_stall) begin
                 pc <= pc;
             end
             else if(branch_taken) begin
@@ -110,7 +126,6 @@ module fetch
     end
 
     always_comb begin
-        //TODO: Use different offset for small memory size
         tag = pc[19:25];
         offset = pc[26:31] >> 3;
         pc_out = pc;
@@ -125,6 +140,10 @@ module fetch
         else if(chit2) begin
             eins1 = cache[16 + offset][0:31];
             eins2 = cache[16 + offset][32:63];
+        end
+        else if(cw_pending) begin
+            eins1 = {11'b00000000001, 21'dx};
+            eins2 = {11'b01000000001, 21'dx};
         end
         else begin
             eins1 = 32'hffffffff;

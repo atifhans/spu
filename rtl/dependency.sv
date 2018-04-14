@@ -193,12 +193,14 @@ module dependency
            ((rf_addr_s4_ep == rb_addr_ep || rf_addr_s4_ep == rb_addr_op) && is_lat4) ||
            ((rf_addr_s5_ep == rb_addr_ep || rf_addr_s5_ep == rb_addr_op) && is_lat5) ||
            ((rf_addr_s6_ep == rb_addr_ep || rf_addr_s6_ep == rb_addr_op) && is_lat6) ||
+
            ((rf_addr_s1_ep == rc_addr_ep || rf_addr_s1_ep == rc_addr_op) && is_lat1) ||
            ((rf_addr_s2_ep == rc_addr_ep || rf_addr_s2_ep == rc_addr_op) && is_lat2) ||
            ((rf_addr_s3_ep == rc_addr_ep || rf_addr_s3_ep == rc_addr_op) && is_lat3) ||
            ((rf_addr_s4_ep == rc_addr_ep || rf_addr_s4_ep == rc_addr_op) && is_lat4) ||
            ((rf_addr_s5_ep == rc_addr_ep || rf_addr_s5_ep == rc_addr_op) && is_lat5) ||
            ((rf_addr_s6_ep == rc_addr_ep || rf_addr_s6_ep == rc_addr_op) && is_lat6) ||
+           
            ((rf_addr_s1_op == ra_addr_op || rf_addr_s1_op == ra_addr_ep) && is_lat1) ||
            ((rf_addr_s2_op == ra_addr_op || rf_addr_s2_op == ra_addr_ep) && is_lat2) ||
            ((rf_addr_s3_op == ra_addr_op || rf_addr_s3_op == ra_addr_ep) && is_lat3) ||
@@ -210,13 +212,7 @@ module dependency
            ((rf_addr_s3_op == rb_addr_op || rf_addr_s3_op == rb_addr_ep) && is_lat3) ||
            ((rf_addr_s4_op == rb_addr_op || rf_addr_s4_op == rb_addr_ep) && is_lat4) ||
            ((rf_addr_s5_op == rb_addr_op || rf_addr_s5_op == rb_addr_ep) && is_lat5) ||
-           ((rf_addr_s6_op == rb_addr_op || rf_addr_s6_op == rb_addr_ep) && is_lat6) ||
-           ((rf_addr_s1_op == rc_addr_op || rf_addr_s1_op == rc_addr_ep) && is_lat1) ||
-           ((rf_addr_s2_op == rc_addr_op || rf_addr_s2_op == rc_addr_ep) && is_lat2) ||
-           ((rf_addr_s3_op == rc_addr_op || rf_addr_s3_op == rc_addr_ep) && is_lat3) ||
-           ((rf_addr_s4_op == rc_addr_op || rf_addr_s4_op == rc_addr_ep) && is_lat4) ||
-           ((rf_addr_s5_op == rc_addr_op || rf_addr_s5_op == rc_addr_ep) && is_lat5) ||
-           ((rf_addr_s6_op == rc_addr_op || rf_addr_s6_op == rc_addr_ep) && is_lat6)
+           ((rf_addr_s6_op == rb_addr_op || rf_addr_s6_op == rb_addr_ep) && is_lat6)
           ) 
         begin
             dep_stall = 1'b1;
