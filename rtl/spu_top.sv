@@ -130,6 +130,7 @@ module spu_top
         .dep_stall(dep_stall),
         .eins1(eins1),
         .eins2(eins2),
+        .flush(flush),
         .opcode_ep(dec_opcode_ep),
         .opcode_op(dec_opcode_op),
         .ra_addr_ep(dec_ra_addr_ep),

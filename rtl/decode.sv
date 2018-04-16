@@ -19,6 +19,7 @@ module decode
     input  logic             rst,
     input  logic [0:31]      eins1,
     input  logic [0:31]      eins2,
+    input  logic             flush,
     input  logic             dep_stall,
     output logic             dec_stall,
     output Opcodes           opcode_ep,

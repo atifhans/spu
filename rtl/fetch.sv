@@ -71,11 +71,11 @@ module fetch
             pc <= 'd0;
         end
         else begin
-            if(dec_stall || dep_stall) begin
-                pc <= pc;
-            end
-            else if(branch_taken) begin
+            if(branch_taken) begin
                 pc <= pc_in;
+            end
+            else if(dec_stall || dep_stall) begin
+                pc <= pc;
             end
             else if(!cmiss) begin
                 pc <= pc + 8;

@@ -73,6 +73,11 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     logic [0:31]     pc_s3;
     logic [0:31]     pc_s4;
     logic [0:31]     pc_s5;
+    logic            flush_s1;
+    logic            flush_s2;
+    logic            flush_s3;
+    logic            flush_s4;
+    logic            flush_s5;
     logic            rf_s1_we;
     logic            rf_s2_we;
     logic            rf_s3_we;
@@ -80,6 +85,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     logic            rf_s5_we;
     logic            rf_s6_we;
     logic            rf_s7_we;
+    logic            flush_reg;
     logic [0:31]     PC_reg;
     logic [0:127]    RT_reg;
     logic [0:2]      unit_idx;
@@ -92,7 +98,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
     logic [0:127]    result_temp;
 
     assign repc_lb32_I10 = {{18{in_I10[0]}}, in_I10, 4'b0000};
-    assign repc_lb32_I16 = {{14{in_I10[0]}}, in_I16, 2'b00};
+    assign repc_lb32_I16 = {{14{in_I16[0]}}, in_I16, 2'b00};
 
     always_ff @(posedge clk) begin
         if(rst) begin
@@ -133,6 +139,11 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
             pc_s4         <= 'd0;
             pc_s5         <= 'd0;
             PC_out        <= 'd0;
+            flush_s1      <= 'd0;
+            flush_s2      <= 'd0;
+            flush_s3      <= 'd0;
+            flush_s4      <= 'd0;
+            flush_s5      <= 'd0;
         end
         else if(flush) begin
             rf_addr_s1_op <= 'd0;
@@ -172,6 +183,12 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
             pc_s4         <= pc_s3;
             pc_s5         <= pc_s4;
             PC_out        <= pc_s5;
+            flush_s1      <= 'd0;
+            flush_s2      <= 'd0;
+            flush_s3      <= 'd0;
+            flush_s4      <= 'd0;
+            flush_s5      <= 'd0;
+            flush         <= 'd0;
         end
         else begin
             rf_addr_s1_op <= in_RT_addr;
@@ -211,6 +228,12 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
             pc_s4         <= pc_s3;
             pc_s5         <= pc_s4;
             PC_out        <= pc_s5;
+            flush_s1      <= flush_reg;
+            flush_s2      <= flush_s1;
+            flush_s3      <= flush_s2;
+            flush_s4      <= flush_s3;
+            flush_s5      <= flush_s4;
+            flush         <= flush_s5;
         end
     end
 
@@ -220,7 +243,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
         RT_reg = 'd0;
         PC_reg = 'd0;
         unit_idx = 'd0;
-        flush = 'd0;
+        flush_reg = 'd0;
         out_ls_wr_en = 'd0;
         cache_wr = 'd0;
 
@@ -228,7 +251,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
 
             LOAD_QUADWORD_DFORM:
                 begin
-                    out_ls_addr = (repc_lb32_I10 + in_RA[0:31]) & MASK1;
+                    out_ls_addr = $signed($signed(repc_lb32_I10) + $signed(in_RA[0:31])) & MASK1;
                     RT_reg = in_ls_data;
                     rt_wr_en = 1'b1;
                     unit_idx = 3'd6;
@@ -244,7 +267,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
 
             STORE_QUADWORD_DFORM:
                 begin
-                    out_ls_addr = (repc_lb32_I10 + in_RA[0:31]) & MASK1;
+                    out_ls_addr = $signed($signed(repc_lb32_I10) + $signed(in_RA[0:31])) & MASK1;
                     out_ls_data = in_RC;
                     out_ls_wr_en = 1'b1;
                     rt_wr_en = 1'b0;
@@ -264,9 +287,9 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
                 begin
                     RT_reg[0:31] = (PC_in + 32'd4);
                     RT_reg[32:127] = 'd0;
-                    PC_reg = (PC_in + repc_lb32_I16);
+                    PC_reg = ($signed(PC_in) + $signed(repc_lb32_I16));
                     rt_wr_en = 1'b0;
-                    flush = 1;
+                    flush_reg = 1;
                     unit_idx = 3'd7;
                 end
 
@@ -276,7 +299,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
                     RT_reg[32:127] = 'd0;
                     PC_reg = repc_lb32_I16;
                     rt_wr_en = 1'b0;
-                    flush = 1;
+                    flush_reg = 1;
                     unit_idx = 3'd7;
                 end
 
@@ -284,15 +307,15 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
                 begin
                     PC_reg = in_RA[0:31] & MASK2;
                     rt_wr_en = 1'b0;
-                    flush = 1;
+                    flush_reg = 1;
                     unit_idx = 3'd7;
                 end
 
             BRANCH_RELATIVE:
                 begin
-                    PC_reg = (PC_in + repc_lb32_I16);
+                    PC_reg = ($signed(PC_in) + $signed(repc_lb32_I16));
                     rt_wr_en = 1'b0;
-                    flush = 1;
+                    flush_reg = 1;
                     unit_idx = 3'd7;
                 end
 
@@ -300,7 +323,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
                 begin
                     PC_reg = repc_lb32_I16;
                     rt_wr_en = 1'b0;
-                    flush = 1;
+                    flush_reg = 1;
                     unit_idx = 3'd7;
                 end
 
@@ -308,11 +331,11 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
                 begin
                     if(in_RC[0:31] != 32'd0) begin
                         PC_reg = (PC_in + repc_lb32_I16) & MASK2;
-                        flush = 1;
+                        flush_reg = 1;
                     end
                     else begin
                         PC_reg = PC_in + 4;
-                        flush = 0;
+                        flush_reg = 0;
                     end
                     unit_idx = 3'd7;
                     rt_wr_en = 1'b0;
@@ -322,11 +345,11 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
                 begin
                     if(in_RC[0:31] == 32'd0) begin
                         PC_reg = (PC_in + repc_lb32_I16) & MASK2;
-                        flush = 1;
+                        flush_reg = 1;
                     end
                     else begin
                         PC_reg = PC_in + 4;
-                        flush = 0;
+                        flush_reg = 0;
                     end
                     unit_idx = 3'd7;
                     rt_wr_en = 1'b0;
@@ -336,11 +359,11 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
                 begin
                     if(in_RC[16:31] != 16'd0) begin
                         PC_reg = (PC_in + repc_lb32_I16) & MASK2;
-                        flush = 1;
+                        flush_reg = 1;
                     end
                     else begin
                         PC_reg = PC_reg + 4;
-                        flush = 0;
+                        flush_reg = 0;
                     end
                     unit_idx = 3'd7;
                     rt_wr_en = 1'b0;
@@ -350,11 +373,11 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
                 begin
                     if(in_RC[16:31] == 16'd0) begin
                         PC_reg = (PC_in + repc_lb32_I16) & MASK2;
-                        flush = 1;
+                        flush_reg = 1;
                     end
                     else begin
                         PC_reg = PC_in + 4;
-                        flush = 0;
+                        flush_reg = 0;
                     end
                     unit_idx = 3'd7;
                     rt_wr_en = 1'b0;

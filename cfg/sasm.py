@@ -72,71 +72,71 @@ with open(fname) as f:
             if(len(words) > 1):
                 syms = words[1].split(',')
             if(len(syms) > 0):
-                if(syms[0][0] == '$'):
-                    syms[0] = syms[0][1:]
                 if(syms[0] == "$lr"):
                     syms[0] = '0'
-                if(syms[0] == "$sp"):
+                elif(syms[0] == "$sp"):
                     syms[0] = '1'
+                elif(syms[0][0] == '$'):
+                    syms[0] = syms[0][1:]
             if(len(syms) > 1):
-                if(syms[1][0] == '$'):
-                    syms[1] = syms[1][1:]
                 if(syms[1] == "$lr"):
                     syms[1] = '0'
-                if(syms[1] == "$sp"):
+                elif(syms[1] == "$sp"):
                     syms[1] = '1'
+                elif(syms[1][0] == '$'):
+                    syms[1] = syms[1][1:]
             if(len(syms) > 2):
-                if(syms[2][0] == '$'):
-                    syms[2] = syms[2][1:]
                 if(syms[2] == "$lr"):
                     syms[2] = '0'
-                if(syms[2] == "$sp"):
+                elif(syms[2] == "$sp"):
                     syms[2] = '1'
+                elif(syms[2][0] == '$'):
+                    syms[2] = syms[2][1:]
             if(len(syms) > 3):
-                if(syms[3][0] == '$'):
-                    syms[3] = syms[3][1:]
                 if(syms[3] == "$lr"):
                     syms[3] = '0'
-                if(syms[3] == "$sp"):
+                elif(syms[3] == "$sp"):
                     syms[3] = '1'
+                elif(syms[3][0] == '$'):
+                    syms[3] = syms[3][1:]
                     
             if(itype == "1" or itype == "3"): #RR or RI17
                 #syms = words[1].split(',')
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(11))
                 if(opcode == "bi"): 
-                    mcode += str(bin(int("0"))[2:].zfill(7))
-                    mcode += str(bin(int(syms[0]))[2:].zfill(7))
-                    mcode += str(bin(int("0"))[2:].zfill(7))
+                    mcode += str(bin(int("0") % (1 << 7))[2:].zfill(7))
+                    mcode += str(bin(int(syms[0]) % (1 << 7))[2:].zfill(7))
+                    mcode += str(bin(int("0") % (1 << 7))[2:].zfill(7))
                 else:
-                    mcode += str(bin(int(syms[0]))[2:].zfill(7))
-                    mcode += str(bin(int(syms[1]))[2:].zfill(7))
-                    mcode += str(bin(int(syms[2]))[2:].zfill(7))
+                    mcode += str(bin(int(syms[0]) % (1 << 7))[2:].zfill(7))
+                    mcode += str(bin(int(syms[1]) % (1 << 7))[2:].zfill(7))
+                    mcode += str(bin(int(syms[2]) % (1 << 7))[2:].zfill(7))
             elif(itype == "2"): #RRR
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(4))
-                mcode += str(bin(int(syms[0]))[2:].zfill(7))
-                mcode += str(bin(int(syms[1]))[2:].zfill(7))
-                mcode += str(bin(int(syms[2]))[2:].zfill(7))
-                mcode += str(bin(int(syms[3]))[2:].zfill(7))
+                mcode += str(bin(int(syms[0]) % (1 << 7))[2:].zfill(7))
+                mcode += str(bin(int(syms[1]) % (1 << 7))[2:].zfill(7))
+                mcode += str(bin(int(syms[2]) % (1 << 7))[2:].zfill(7))
+                mcode += str(bin(int(syms[3]) % (1 << 7))[2:].zfill(7))
             elif(itype == "4"): #RI10
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(8))
-                mcode += str(bin(int(syms[0]))[2:].zfill(10))
-                mcode += str(bin(int(syms[1]))[2:].zfill(7))
-                mcode += str(bin(int(syms[2]))[2:].zfill(7))
+                mcode += str(bin(int(syms[0]) % (1 << 10))[2:].zfill(10))
+                mcode += str(bin(int(syms[1]) % (1 << 7))[2:].zfill(7))
+                mcode += str(bin(int(syms[2]) % (1 << 7))[2:].zfill(7))
             elif(itype == "5"): #RI16
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(9))
                 if(opcode == "br" or opcode == "bra"):
-                    mcode += str(bin(int(syms[0]))[2:].zfill(16))
-                    mcode += str(bin(int("0"))[2:].zfill(7))
+                    mcode += str(bin(int(syms[0]) % (1 << 16))[2:].zfill(16))
+                    mcode += str(bin(int("0") % (1 << 7))[2:].zfill(7))
                 else:
-                    mcode += str(bin(int(syms[0]))[2:].zfill(16))
-                    mcode += str(bin(int(syms[1]))[2:].zfill(7))
+                    mcode += str(bin(int(syms[0]) % (1 << 16))[2:].zfill(16))
+                    mcode += str(bin(int(syms[1]) % (1 << 7))[2:].zfill(7))
             elif(itype == "6"): #RI18
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(7))
-                mcode += str(bin(int(syms[0]))[2:].zfill(18))
-                mcode += str(bin(int(syms[1]))[2:].zfill(7))
+                mcode += str(bin(int(syms[0]) % (1 << 18))[2:].zfill(18))
+                mcode += str(bin(int(syms[1]) % (1 << 7))[2:].zfill(7))
             else:
                 mcode += str(bin(int(ins_opcode[opcode]))[2:].zfill(11))
-                mcode += str(bin(int("0"))[2:].zfill(21))
+                mcode += str(bin(int("0") % (1 << 21))[2:].zfill(21))
 
         fw.write(mcode + "\n")
 

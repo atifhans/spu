@@ -5,7 +5,7 @@ add wave -noupdate /spu_tb/u_spu_top/I10_ep
 add wave -noupdate /spu_tb/u_spu_top/I10_op
 add wave -noupdate /spu_tb/u_spu_top/I16_ep
 add wave -noupdate /spu_tb/u_spu_top/I16_op
-add wave -noupdate /spu_tb/u_spu_top/I18_ep
+add wave -noupdate -radix decimal /spu_tb/u_spu_top/I18_ep
 add wave -noupdate /spu_tb/u_spu_top/I18_op
 add wave -noupdate /spu_tb/u_spu_top/I7_ep
 add wave -noupdate /spu_tb/u_spu_top/I7_op
@@ -18,7 +18,7 @@ add wave -noupdate /spu_tb/u_spu_top/dec_I10_ep
 add wave -noupdate /spu_tb/u_spu_top/dec_I10_op
 add wave -noupdate /spu_tb/u_spu_top/dec_I16_ep
 add wave -noupdate /spu_tb/u_spu_top/dec_I16_op
-add wave -noupdate /spu_tb/u_spu_top/dec_I18_ep
+add wave -noupdate -radix decimal /spu_tb/u_spu_top/dec_I18_ep
 add wave -noupdate /spu_tb/u_spu_top/dec_I18_op
 add wave -noupdate /spu_tb/u_spu_top/dec_I7_ep
 add wave -noupdate /spu_tb/u_spu_top/dec_I7_op
@@ -93,7 +93,7 @@ add wave -noupdate /spu_tb/u_spu_top/u_local_store/ls_data_wr
 add wave -noupdate /spu_tb/u_spu_top/u_local_store/ls_mem
 add wave -noupdate /spu_tb/u_spu_top/u_local_store/ls_wr_en
 add wave -noupdate -divider fetch
-add wave -noupdate /spu_tb/u_spu_top/u_fetch/blk_offset
+add wave -noupdate /spu_tb/u_spu_top/u_fetch/tag
 add wave -noupdate /spu_tb/u_spu_top/u_fetch/blk_tag
 add wave -noupdate /spu_tb/u_spu_top/u_fetch/blk_valid
 add wave -noupdate /spu_tb/u_spu_top/u_fetch/branch_taken
@@ -113,7 +113,6 @@ add wave -noupdate -radix decimal /spu_tb/u_spu_top/u_fetch/pc
 add wave -noupdate /spu_tb/u_spu_top/u_fetch/pc_in
 add wave -noupdate /spu_tb/u_spu_top/u_fetch/pc_out
 add wave -noupdate /spu_tb/u_spu_top/u_fetch/rst
-add wave -noupdate /spu_tb/u_spu_top/u_fetch/tag
 add wave -noupdate -divider {Odd Pipe}
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_odd_pipe/MASK1
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_odd_pipe/MASK2
@@ -194,13 +193,11 @@ add wave -noupdate -radix decimal /spu_tb/u_spu_top/u_fetch/pc
 add wave -noupdate /spu_tb/u_spu_top/u_decode/stall_done
 add wave -noupdate /spu_tb/u_spu_top/u_decode/eins1
 add wave -noupdate /spu_tb/u_spu_top/u_decode/eins2
-add wave -noupdate /spu_tb/u_spu_top/u_decode/eoc1_10b
 add wave -noupdate /spu_tb/u_spu_top/u_decode/eoc1_11b
 add wave -noupdate /spu_tb/u_spu_top/u_decode/eoc1_4b
 add wave -noupdate /spu_tb/u_spu_top/u_decode/eoc1_7b
 add wave -noupdate /spu_tb/u_spu_top/u_decode/eoc1_8b
 add wave -noupdate /spu_tb/u_spu_top/u_decode/eoc1_9b
-add wave -noupdate /spu_tb/u_spu_top/u_decode/eoc2_10b
 add wave -noupdate /spu_tb/u_spu_top/u_decode/eoc2_11b
 add wave -noupdate /spu_tb/u_spu_top/u_decode/eoc2_4b
 add wave -noupdate /spu_tb/u_spu_top/u_decode/eoc2_7b
@@ -228,9 +225,9 @@ add wave -noupdate /spu_tb/u_spu_top/u_decode/in_I8e
 add wave -noupdate /spu_tb/u_spu_top/u_decode/in_I8o
 add wave -noupdate /spu_tb/u_spu_top/u_decode/ins1_type
 add wave -noupdate /spu_tb/u_spu_top/u_decode/ins2_type
-add wave -noupdate /spu_tb/u_spu_top/u_decode/opcode_ep
 add wave -noupdate /spu_tb/u_spu_top/u_decode/opcode_i1
 add wave -noupdate /spu_tb/u_spu_top/u_decode/opcode_i2
+add wave -noupdate /spu_tb/u_spu_top/u_decode/opcode_ep
 add wave -noupdate /spu_tb/u_spu_top/u_decode/opcode_op
 add wave -noupdate /spu_tb/u_spu_top/u_decode/ra_addr_ep
 add wave -noupdate /spu_tb/u_spu_top/u_decode/ra_addr_i1
@@ -244,7 +241,6 @@ add wave -noupdate /spu_tb/u_spu_top/u_decode/rc_addr_ep
 add wave -noupdate /spu_tb/u_spu_top/u_decode/rc_addr_i1
 add wave -noupdate /spu_tb/u_spu_top/u_decode/rc_addr_i2
 add wave -noupdate /spu_tb/u_spu_top/u_decode/rc_addr_op
-add wave -noupdate /spu_tb/u_spu_top/u_decode/rst
 add wave -noupdate /spu_tb/u_spu_top/u_decode/rt_addr_ep
 add wave -noupdate /spu_tb/u_spu_top/u_decode/rt_addr_i1
 add wave -noupdate /spu_tb/u_spu_top/u_decode/rt_addr_i2
@@ -427,8 +423,8 @@ add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rb_data_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rb_fw_ep
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rb_fw_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rc_addr_ep
-add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rc_addr_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rc_data_ep
+add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rc_addr_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rc_data_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rc_fw_ep
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rc_fw_op
@@ -449,16 +445,16 @@ add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_addr_s7_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_ep
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s2_ep
-add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s2_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s3_ep
-add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s3_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s4_ep
-add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s4_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s5_ep
-add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s5_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s6_ep
-add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s6_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s7_ep
+add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s2_op
+add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s3_op
+add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s4_op
+add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s5_op
+add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s6_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_data_s7_op
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_idx_s2_ep
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rf_idx_s2_op
@@ -476,10 +472,10 @@ add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rst
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rt_addr_ep
 add wave -noupdate /spu_tb/u_spu_top/u_spu_pipes_top/u_fw_macro/rt_addr_op
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {100 ns} 0}
+WaveRestoreCursors {{Cursor 1} {405 ns} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 321
-configure wave -valuecolwidth 100
+configure wave -valuecolwidth 103
 configure wave -justifyvalue left
 configure wave -signalnamewidth 1
 configure wave -snapdistance 10
@@ -492,4 +488,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {9803 ns} {10027 ns}
+WaveRestoreZoom {0 ns} {448 ns}

@@ -37,14 +37,14 @@ def run_syn(name, clk):
     subprocess.call(["dc_shell", "-f", "runsynth.tcl"])
     os.chdir("..")
 
-def run_sim(mode):
+def run_sim(mode, ins_file):
     lname = gen_sim_script(name)
     os.chdir("cfg")
     if(mode == "1"):
         subprocess.call(["./sasm.py", "even_ins.sasm", "even_ins_file.txt", mode])
         subprocess.call(["./sasm.py", "odd_ins.sasm", "odd_ins_file.txt", mode])
     else:
-        subprocess.call(["./sasm.py", "sm_test1.sasm", "sm_test1.txt", mode])
+        subprocess.call(["./sasm.py", ins_file, "spu_mcode.bin", mode])
     os.chdir("..")
     os.chdir("sim")
     if(mode == "1"):
@@ -79,17 +79,18 @@ if flow == "syn":
     print "Running Synthesis on module " + name + "with clock period: " + str(clk)
     run_syn(name, clk)
 elif flow == "sim":
-    if(len(sys.argv) < 3):
+    if(len(sys.argv) < 4):
         print "Invalid number of arguments"
         print_usage()
         sys.exit(0)
     name = sys.argv[2]
+    ins_file = sys.argv[3]
     if(name == "sp_pipes_tb"):
         mode = "1"
     else:
         mode = "0"
     print "Running Simulation on module " + name
-    run_sim(mode)
+    run_sim(mode, ins_file)
 elif flow == "clean":
     print "Cleaning Temp Files!"
     subprocess.call(["rm", "-rf", "synth/*", "sim/*"])
