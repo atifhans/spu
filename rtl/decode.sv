@@ -19,8 +19,8 @@ module decode
     input  logic             rst,
     input  logic [0:31]      eins1,
     input  logic [0:31]      eins2,
-    input  logic             flush,
     input  logic             dep_stall,
+    input  logic             flush,
     output logic             dec_stall,
     output Opcodes           opcode_ep,
     output Opcodes           opcode_op,
@@ -119,7 +119,30 @@ module decode
             in_I18o <= 'dx;
         end
         else begin
-            if(dep_stall) begin
+            if(flush) begin
+                stall_done <= 'd0;
+                opcode_ep <= LNOP;
+                opcode_op <= NOP;
+                ra_addr_ep <= 'dx;
+                rb_addr_ep <= 'dx;
+                rc_addr_ep <= 'dx;
+                rt_addr_ep <= 'dx;
+                ra_addr_op <= 'dx;
+                rb_addr_op <= 'dx;
+                rc_addr_op <= 'dx;
+                rt_addr_op <= 'dx;
+                in_I7e <= 'dx;
+                in_I8e <= 'dx;
+                in_I10e <= 'dx;
+                in_I16e <= 'dx;
+                in_I18e <= 'dx;
+                in_I7o <= 'dx;
+                in_I8o <= 'dx;
+                in_I10o <= 'dx;
+                in_I16o <= 'dx;
+                in_I18o <= 'dx;
+            end
+            else if(dep_stall) begin
                 stall_done <= stall_done;
                 opcode_ep <= opcode_ep;
                 opcode_op <= opcode_op;
@@ -156,6 +179,15 @@ module decode
                         in_I16e    <= in_I16_i2;
                         in_I18e    <= in_I18_i2;
                         opcode_op  <= NOP;
+                        ra_addr_op <= 'dx;
+                        rb_addr_op <= 'dx;
+                        rc_addr_op <= 'dx;
+                        rt_addr_op <= 'dx;
+                        in_I7o     <= 'dx;
+                        in_I8o     <= 'dx;
+                        in_I10o    <= 'dx;
+                        in_I16o    <= 'dx;
+                        in_I18o    <= 'dx;
                     end
                     else begin
                         opcode_op  <= opcode_i2;
@@ -169,6 +201,15 @@ module decode
                         in_I16o    <= in_I16_i2;
                         in_I18o    <= in_I18_i2;
                         opcode_ep  <= LNOP;
+                        ra_addr_ep <= 'dx;
+                        rb_addr_ep <= 'dx;
+                        rc_addr_ep <= 'dx;
+                        rt_addr_ep <= 'dx;
+                        in_I7e     <= 'dx;
+                        in_I8e     <= 'dx;
+                        in_I10e    <= 'dx;
+                        in_I16e    <= 'dx;
+                        in_I18e    <= 'dx;
                     end
                     stall_done <= (dep_stall == 1) ? 1'b1 : 1'b0;
                 end
@@ -185,6 +226,15 @@ module decode
                         in_I16e    <= in_I16_i1;
                         in_I18e    <= in_I18_i1;
                         opcode_op  <= NOP;
+                        ra_addr_op <= 'dx;
+                        rb_addr_op <= 'dx;
+                        rc_addr_op <= 'dx;
+                        rt_addr_op <= 'dx;
+                        in_I7o     <= 'dx;
+                        in_I8o     <= 'dx;
+                        in_I10o    <= 'dx;
+                        in_I16o    <= 'dx;
+                        in_I18o    <= 'dx;
                     end
                     else begin
                         opcode_op  <= opcode_i1;
@@ -198,6 +248,15 @@ module decode
                         in_I16o    <= in_I16_i1;
                         in_I18o    <= in_I18_i1;
                         opcode_ep  <= LNOP;
+                        ra_addr_ep <= 'dx;
+                        rb_addr_ep <= 'dx;
+                        rc_addr_ep <= 'dx;
+                        rt_addr_ep <= 'dx;
+                        in_I7e     <= 'dx;
+                        in_I8e     <= 'dx;
+                        in_I10e    <= 'dx;
+                        in_I16e    <= 'dx;
+                        in_I18e    <= 'dx;
                     end
                     stall_done <= (dep_stall == 1) ? 1'b0 : 1'b1;
                 end
@@ -752,11 +811,19 @@ module decode
                     begin
                         ins1_type = EVEN;
                         opcode_i1 = LNOP;
+                        ra_addr_i1 = 'dx;
+                        rb_addr_i1 = 'dx;
+                        rc_addr_i1 = 'dx;
+                        rt_addr_i1 = 'dx;
                     end
                 11'b01000000001:
                     begin
                         ins1_type = ODD;
                         opcode_i1 = NOP;
+                        ra_addr_i1 = 'dx;
+                        rb_addr_i1 = 'dx;
+                        rc_addr_i1 = 'dx;
+                        rt_addr_i1 = 'dx;
                     end
             endcase
         end
@@ -1235,28 +1302,32 @@ module decode
                     begin
                         ins2_type = EVEN;
                         opcode_i2 = LNOP;
+                        ra_addr_i2 = 'dx;
+                        rb_addr_i2 = 'dx;
+                        rc_addr_i2 = 'dx;
+                        rt_addr_i2 = 'dx;
                     end
                 11'b01000000001:
                     begin
                         ins2_type = ODD;
                         opcode_i2 = NOP;
+                        ra_addr_i2 = 'dx;
+                        rb_addr_i2 = 'dx;
+                        rc_addr_i2 = 'dx;
+                        rt_addr_i2 = 'dx;
                     end
             endcase
         end
 
-        if(stall_done) begin
+        if(stall_done || flush) begin
             dec_stall = 0;
         end
         else if((ins1_type == EVEN && ins2_type == EVEN) || 
                 (ins1_type == ODD  && ins2_type == ODD))
         begin
-
             dec_stall = 1;
         end
-        else if((rt_addr_i1 == rt_addr_i2) && rt_addr_i1 !== 7'dx && rt_addr_i2 !== 7'dx
-                 //opcode_i1 != STORE_QUADWORD_AFORM && opcode_i1 != STORE_QUADWORD_DFORM &&
-                 //opcode_i2 != STORE_QUADWORD_AFORM && opcode_i2 != STORE_QUADWORD_DFORM
-               ) begin
+        else if((rt_addr_i1 == rt_addr_i2) && rt_addr_i1 !== 7'dx && rt_addr_i2 !== 7'dx) begin
             dec_stall = 1;
         end
         else begin

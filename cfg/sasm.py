@@ -145,11 +145,22 @@ with open(fname) as f:
     f.close()
 
 with open(fout) as f:
+    num_ins = 0
     fw = open("ls_load_file.txt", 'w')
     for line in f:
         by = re.findall('........', line)
         for word in by:
             fw.write(word + "\n")
+            num_ins+=1
+
+    word = "00000000"
+    while num_ins < 992:
+        fw.write(word + "\n")
+        num_ins+=1
+
+    fd = open("data_file.txt", 'r')
+    for line in fd:
+        fw.write(line)
 
 print "!!SPU Mini Assembler finished sucessfully!!\n"
 
