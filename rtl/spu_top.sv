@@ -97,6 +97,8 @@ module spu_top
     logic             cache_wr;
     logic             dec_stall;
     logic             dep_stall;
+    logic [0:31]      pc_dec;
+    logic [0:31]      pc_dep;
 
     local_store u_local_store (
         .clk(clk),
@@ -131,6 +133,8 @@ module spu_top
         .eins1(eins1),
         .eins2(eins2),
         .flush(flush),
+        .pc_in(pc_ftod),
+        .pc_out(pc_dec),
         .opcode_ep(dec_opcode_ep),
         .opcode_op(dec_opcode_op),
         .ra_addr_ep(dec_ra_addr_ep),
@@ -156,6 +160,8 @@ module spu_top
     dependency u_dependency ( 
         .clk(clk),
         .rst(rst),
+        .pc_in(pc_dec),
+        .pc_out(pc_dep),
         .dec_opcode_ep(dec_opcode_ep),
         .dec_opcode_op(dec_opcode_op),
         .dec_ra_addr_ep(dec_ra_addr_ep),
@@ -277,7 +283,7 @@ module spu_top
         .ls_addr(ls_addr),
         .ls_wr_en(ls_wr_en),
         .cache_wr(cache_wr),
-        .PC_in(pc_ftod),
+        .PC_in(pc_dep),
         .PC_out(pc_dtof)
     );
 

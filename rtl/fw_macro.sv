@@ -89,7 +89,7 @@ module fw_macro #(parameter OPCODE_LEN  = 11,
                       (rf_addr_s4_op === ra_addr_ep && (rf_idx_s4_op == 3'd5)) ? rf_data_s4_op :
                       (rf_addr_s5_op === ra_addr_ep && (rf_idx_s5_op == 3'd5)) ? rf_data_s5_op :
                       (rf_addr_s6_op === ra_addr_ep && (rf_idx_s6_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s6_op :
-                      (rf_addr_s7_op === ra_addr_ep && (rf_idx_s7_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s7_op : 
+                      (rf_addr_s7_op === ra_addr_ep && (rf_idx_s7_op == 3'd5 || rf_idx_s7_op == 3'd6)) ? rf_data_s7_op : 
                       (rf_addr_ep    === ra_addr_ep) ? rf_data_ep :
                       (rf_addr_op    === ra_addr_ep) ? rf_data_op : ra_data_ep;
 
@@ -102,7 +102,7 @@ module fw_macro #(parameter OPCODE_LEN  = 11,
                       (rf_addr_s4_op === rb_addr_ep && (rf_idx_s4_op == 3'd5)) ? rf_data_s4_op :
                       (rf_addr_s5_op === rb_addr_ep && (rf_idx_s5_op == 3'd5)) ? rf_data_s5_op :
                       (rf_addr_s6_op === rb_addr_ep && (rf_idx_s6_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s6_op :
-                      (rf_addr_s7_op === rb_addr_ep && (rf_idx_s7_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s7_op : 
+                      (rf_addr_s7_op === rb_addr_ep && (rf_idx_s7_op == 3'd5 || rf_idx_s7_op == 3'd6)) ? rf_data_s7_op : 
                       (rf_addr_ep    === rb_addr_ep) ? rf_data_ep :
                       (rf_addr_op    === rb_addr_ep) ? rf_data_op : rb_data_ep;
 
@@ -115,7 +115,7 @@ module fw_macro #(parameter OPCODE_LEN  = 11,
                       (rf_addr_s4_op === rc_addr_ep && (rf_idx_s4_op == 3'd5)) ? rf_data_s4_op :
                       (rf_addr_s5_op === rc_addr_ep && (rf_idx_s5_op == 3'd5)) ? rf_data_s5_op :
                       (rf_addr_s6_op === rc_addr_ep && (rf_idx_s6_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s6_op :
-                      (rf_addr_s7_op === rc_addr_ep && (rf_idx_s7_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s7_op : 
+                      (rf_addr_s7_op === rc_addr_ep && (rf_idx_s7_op == 3'd5 || rf_idx_s7_op == 3'd6)) ? rf_data_s7_op : 
                       (rf_addr_ep    === rc_addr_ep) ? rf_data_ep :
                       (rf_addr_op    === rc_addr_ep) ? rf_data_op : rc_data_ep;
 
@@ -128,7 +128,7 @@ module fw_macro #(parameter OPCODE_LEN  = 11,
                       (rf_addr_s4_op === ra_addr_op && (rf_idx_s4_op == 3'd5)) ? rf_data_s4_op :
                       (rf_addr_s5_op === ra_addr_op && (rf_idx_s5_op == 3'd5)) ? rf_data_s5_op :
                       (rf_addr_s6_op === ra_addr_op && (rf_idx_s6_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s6_op :
-                      (rf_addr_s7_op === ra_addr_op && (rf_idx_s7_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s7_op : 
+                      (rf_addr_s7_op === ra_addr_op && (rf_idx_s7_op == 3'd5 || rf_idx_s7_op == 3'd6)) ? rf_data_s7_op : 
                       (rf_addr_ep    === ra_addr_op) ? rf_data_ep :
                       (rf_addr_op    === ra_addr_op) ? rf_data_op : ra_data_op;
 
@@ -141,7 +141,7 @@ module fw_macro #(parameter OPCODE_LEN  = 11,
                       (rf_addr_s4_op === rb_addr_op && (rf_idx_s4_op == 3'd5)) ? rf_data_s4_op :
                       (rf_addr_s5_op === rb_addr_op && (rf_idx_s5_op == 3'd5)) ? rf_data_s5_op :
                       (rf_addr_s6_op === rb_addr_op && (rf_idx_s6_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s6_op :
-                      (rf_addr_s7_op === rb_addr_op && (rf_idx_s7_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s7_op : 
+                      (rf_addr_s7_op === rb_addr_op && (rf_idx_s7_op == 3'd5 || rf_idx_s7_op == 3'd6)) ? rf_data_s7_op : 
                       (rf_addr_ep    === rb_addr_op) ? rf_data_ep :
                       (rf_addr_op    === rb_addr_op) ? rf_data_op : rb_data_op;
 
@@ -154,7 +154,7 @@ module fw_macro #(parameter OPCODE_LEN  = 11,
                       (rf_addr_s4_op === rc_addr_op && (rf_idx_s4_op == 3'd5)) ? rf_data_s4_op :
                       (rf_addr_s5_op === rc_addr_op && (rf_idx_s5_op == 3'd5)) ? rf_data_s5_op :
                       (rf_addr_s6_op === rc_addr_op && (rf_idx_s6_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s6_op :
-                      (rf_addr_s7_op === rc_addr_op && (rf_idx_s7_op == 3'd5 || rf_idx_s6_op == 3'd6)) ? rf_data_s7_op : 
+                      (rf_addr_s7_op === rc_addr_op && (rf_idx_s7_op == 3'd5 || rf_idx_s7_op == 3'd6)) ? rf_data_s7_op : 
                       (rf_addr_ep    === rc_addr_op) ? rf_data_ep :
                       (rf_addr_op    === rc_addr_op) ? rf_data_op : rc_data_op;
 

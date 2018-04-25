@@ -62,6 +62,8 @@ module dependency
     input  logic [0:2]       rf_idx_s5_op,
     input  logic [0:2]       rf_idx_s6_op,
     input  logic             flush,
+    input  logic [0:31]      pc_in,
+    output logic [0:31]      pc_out,
     output Opcodes           opcode_ep,
     output Opcodes           opcode_op,
     output logic [0:6]       ra_addr_ep,
@@ -130,6 +132,7 @@ module dependency
             I10_op     <= 'dx;
             I16_op     <= 'dx;
             I18_op     <= 'dx;
+            pc_out     <= 'dx;
         end
         else begin
             if(flush || dep_stall) begin
@@ -176,6 +179,7 @@ module dependency
                 I16_op     <= dec_I16_op;
                 I18_op     <= dec_I18_op;
             end
+            pc_out     <= pc_in;
         end
     end
 

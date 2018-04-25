@@ -288,7 +288,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
                     RT_reg[0:31] = (PC_in + 32'd4);
                     RT_reg[32:127] = 'd0;
                     PC_reg = ($signed(PC_in) + $signed(repc_lb32_I16));
-                    rt_wr_en = 1'b0;
+                    rt_wr_en = 1'b1;
                     flush_reg = 1;
                     unit_idx = 3'd7;
                 end
@@ -298,7 +298,7 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
                     RT_reg[0:31] = (PC_in + 32'd4);
                     RT_reg[32:127] = 'd0;
                     PC_reg = repc_lb32_I16;
-                    rt_wr_en = 1'b0;
+                    rt_wr_en = 1'b1;
                     flush_reg = 1;
                     unit_idx = 3'd7;
                 end

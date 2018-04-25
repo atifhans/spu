@@ -42,6 +42,7 @@ module fetch
     logic                cmiss;
     logic                cw_pending;
     logic                cache_wr_dly;
+    logic                only1_inst;
 
     always_ff @(posedge clk) begin
         if(rst) begin
@@ -78,7 +79,7 @@ module fetch
                 pc <= pc;
             end
             else if(!cmiss) begin
-                pc <= pc + 8;
+                pc <= (only1_inst) ? pc + 4 : pc + 8;
             end
         end
     end
@@ -127,6 +128,7 @@ module fetch
     always_comb begin
         tag = pc[19:24];
         offset = pc[25:31] >> 3;
+        only1_inst = pc[29];
         pc_out = pc;
         chit1 = (tag === blk_tag[0] && blk_valid[0]);
         chit2 = (tag === blk_tag[1] && blk_valid[1]); 
@@ -134,11 +136,11 @@ module fetch
         cmiss = ~chit;
         if(chit1) begin
             eins1 = cache[offset][0:31];
-            eins2 = cache[offset][32:63];
+            eins2 = (only1_inst) ? {11'b01000000001, 21'dx} : cache[offset][32:63];
         end
         else if(chit2) begin
             eins1 = cache[16 + offset][0:31];
-            eins2 = cache[16 + offset][32:63];
+            eins2 = (only1_inst) ? {11'b01000000001, 21'dx} : cache[16 + offset][32:63];
         end
         else if(cw_pending) begin
             eins1 = {11'b00000000001, 21'dx};

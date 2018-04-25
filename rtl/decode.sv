@@ -21,6 +21,8 @@ module decode
     input  logic [0:31]      eins2,
     input  logic             dep_stall,
     input  logic             flush,
+    input  logic [0:31]      pc_in,
+    output logic [0:31]      pc_out,
     output logic             dec_stall,
     output Opcodes           opcode_ep,
     output Opcodes           opcode_op,
@@ -117,6 +119,7 @@ module decode
             in_I10o <= 'dx;
             in_I16o <= 'dx;
             in_I18o <= 'dx;
+            pc_out <= 'dx;
         end
         else begin
             if(flush) begin
@@ -141,6 +144,7 @@ module decode
                 in_I10o <= 'dx;
                 in_I16o <= 'dx;
                 in_I18o <= 'dx;
+                pc_out <= pc_in;
             end
             else if(dep_stall) begin
                 stall_done <= stall_done;
@@ -164,6 +168,7 @@ module decode
                 in_I10o <= in_I10o;
                 in_I16o <= in_I16o;
                 in_I18o <= in_I18o;
+                pc_out <= pc_in;
             end
             else if(dec_stall || stall_done) begin
                 if(stall_done) begin
@@ -188,6 +193,7 @@ module decode
                         in_I10o    <= 'dx;
                         in_I16o    <= 'dx;
                         in_I18o    <= 'dx;
+                        pc_out <= pc_in;
                     end
                     else begin
                         opcode_op  <= opcode_i2;
@@ -210,6 +216,7 @@ module decode
                         in_I10e    <= 'dx;
                         in_I16e    <= 'dx;
                         in_I18e    <= 'dx;
+                        pc_out     <= pc_in + 32'd4;
                     end
                     stall_done <= (dep_stall == 1) ? 1'b1 : 1'b0;
                 end
@@ -235,6 +242,7 @@ module decode
                         in_I10o    <= 'dx;
                         in_I16o    <= 'dx;
                         in_I18o    <= 'dx;
+                        pc_out <= pc_in;
                     end
                     else begin
                         opcode_op  <= opcode_i1;
@@ -257,6 +265,7 @@ module decode
                         in_I10e    <= 'dx;
                         in_I16e    <= 'dx;
                         in_I18e    <= 'dx;
+                        pc_out     <= pc_in;
                     end
                     stall_done <= (dep_stall == 1) ? 1'b0 : 1'b1;
                 end
@@ -283,6 +292,7 @@ module decode
                     in_I10o    <= in_I10_i2;
                     in_I16o    <= in_I16_i2;
                     in_I18o    <= in_I18_i2;
+                    pc_out     <= pc_in + 32'd4;
                 end
                 else begin
                     opcode_ep  <= opcode_i2;
@@ -305,6 +315,7 @@ module decode
                     in_I10o    <= in_I10_i1;
                     in_I16o    <= in_I16_i1;
                     in_I18o    <= in_I18_i1;
+                    pc_out     <= pc_in;
                 end
             end
         end
