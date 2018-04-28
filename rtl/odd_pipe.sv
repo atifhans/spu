@@ -386,12 +386,14 @@ module odd_pipe #(parameter OPCODE_LEN  = 11,
             SHIFT_LEFT_QUADWORD_BY_BITS :
                 begin
                     RT_reg = in_RA << in_RB[29:31];
+                    rt_wr_en = 1'b1;
                     unit_idx = 3'd5;
                 end
 
             SHIFT_LEFT_QUADWORD_BY_BITS_IMMEDIATE :
                 begin
                     RT_reg = in_RA << in_I7[4:6];
+                    rt_wr_en = 1'b1;
                     unit_idx = 3'd5;
                 end
 
