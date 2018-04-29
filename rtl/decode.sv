@@ -1338,7 +1338,10 @@ module decode
         begin
             dec_stall = 1;
         end
-        else if((rt_addr_i1 == rt_addr_i2) && rt_addr_i1 !== 7'dx && rt_addr_i2 !== 7'dx) begin
+        else if(((rt_addr_i1 == rt_addr_i2) && rt_addr_i1 !== 7'dx && rt_addr_i2 !== 7'dx) ||
+                (rt_addr_i1 == ra_addr_i2 || rt_addr_i2 == ra_addr_i1) ||
+                (rt_addr_i1 == rb_addr_i2 || rt_addr_i2 == rb_addr_i1) ||
+                (rt_addr_i1 == rc_addr_i2 || rt_addr_i2 == rc_addr_i1)) begin
             dec_stall = 1;
         end
         else begin
